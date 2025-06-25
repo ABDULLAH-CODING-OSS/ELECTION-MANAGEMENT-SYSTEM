@@ -390,7 +390,7 @@ public class USER extends javax.swing.JFrame {
                 {null, null, null, null, null}
             },
             new String [] {
-                " Name", "Age", "Constitutency", "Party", " Symbol"
+                "CNIC", "NAME", "PARTYID", "CONSTITUTENCY ID", "PARTY SYMBOL"
             }
         ));
         jScrollPane2.setViewportView(jTable1);
@@ -442,7 +442,7 @@ public class USER extends javax.swing.JFrame {
                 {null, null, null, null, null}
             },
             new String [] {
-                "Name", "Age", "Party", "Constitutency", "Symbol"
+                "CNIC", "NAME", "PARTY ID", "CONSTITUTENCY ID", "PARTY SYMBOL"
             }
         ));
         jScrollPane3.setViewportView(jTable2);

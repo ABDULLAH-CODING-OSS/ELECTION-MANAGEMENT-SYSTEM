@@ -446,23 +446,24 @@
         <Component class="javax.swing.JComboBox" name="constituencyField">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="16">
+              <StringArray count="17">
                 <StringItem index="0" value="SELECT YOUR CONSTITUTENCIES "/>
-                <StringItem index="1" value="1. Lahore Gulshan Ravi NA-128"/>
-                <StringItem index="2" value="2. Lahore Model Town NA-126"/>
-                <StringItem index="3" value="3. Lahore Cantt NA-129"/>
+                <StringItem index="1" value="1. NA-128 (Lahore)"/>
+                <StringItem index="2" value="2. NA-126 (Lahore)"/>
+                <StringItem index="3" value="3. NA-129 (Lahore)"/>
                 <StringItem index="4" value=" "/>
-                <StringItem index="5" value="4. Karachi Saddar NA-247"/>
-                <StringItem index="6" value="5. Karachi Korangi NA-241"/>
-                <StringItem index="7" value="6. Karachi Malir NA-238"/>
+                <StringItem index="5" value="4. NA-247 (Karachi)"/>
+                <StringItem index="6" value="5. NA-241 (Karachi)"/>
+                <StringItem index="7" value="6. NA-238 (Karachi)"/>
                 <StringItem index="8" value=" "/>
-                <StringItem index="9" value="7. Islamabad G-10 NA-47"/>
-                <StringItem index="10" value="8. Islamabad G-13 NA-48"/>
-                <StringItem index="11" value="9. Islamabad I-8 NA-49"/>
+                <StringItem index="9" value="7. NA-47 (Islamabad)"/>
+                <StringItem index="10" value="8. NA-48 (Islamabad)"/>
+                <StringItem index="11" value="9. NA-49 (Islamabad)"/>
                 <StringItem index="12" value=" "/>
-                <StringItem index="13" value="10. Rawalpindi Westridge NA-53"/>
-                <StringItem index="14" value="11. Rawalpindi Chaklala NA-52"/>
-                <StringItem index="15" value="12. Rawalpindi Dhoke Hassu NA-55"/>
+                <StringItem index="13" value="10. NA-53 (Rawalpindi)"/>
+                <StringItem index="14" value="11. NA-52 (Rawalpindi)"/>
+                <StringItem index="15" value="12. NA-55 (Rawalpindi)"/>
+                <StringItem index="16" value=" "/>
               </StringArray>
             </Property>
           </Properties>

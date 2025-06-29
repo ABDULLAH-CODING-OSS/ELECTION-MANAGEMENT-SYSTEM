@@ -4,8 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/ALL%20DATA%20OF%20CODING/NetBeans-OOP-Java/Election%20Management%20System/src/driver/ClientSide.java</file>
-            <file>file:/D:/ALL%20DATA%20OF%20CODING/NetBeans-OOP-Java/Election%20Management%20System/src/design/forget.java</file>
             <file>file:/D:/ALL%20DATA%20OF%20CODING/NetBeans-OOP-Java/Election%20Management%20System/src/design/Admin.java</file>
+            <file>file:/D:/ALL%20DATA%20OF%20CODING/NetBeans-OOP-Java/Election%20Management%20System/src/design/USER.java</file>
+            <file>file:/D:/ALL%20DATA%20OF%20CODING/NetBeans-OOP-Java/Election%20Management%20System/src/driver/ElectionManagementSystem.java</file>
+            <file>file:/D:/ALL%20DATA%20OF%20CODING/NetBeans-OOP-Java/Election%20Management%20System/src/driver/SessionData.java</file>
             <file>file:/D:/ALL%20DATA%20OF%20CODING/NetBeans-OOP-Java/Election%20Management%20System/src/design/SignUp.java</file>
             <file>file:/D:/ALL%20DATA%20OF%20CODING/NetBeans-OOP-Java/Election%20Management%20System/src/design/Login.java</file>
         </group>

@@ -1,4 +1,5 @@
 package design;
+
 import com.sun.jdi.connect.spi.Connection;
 import design.Admin;
 import design.USER;
@@ -10,24 +11,23 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.border.MatteBorder;
 
-
 public class Login extends javax.swing.JFrame {
 
     private static final String ADMIN_CNIC = "1234567890123";
-  
 
     public Login() {
         initComponents();
         setLabelImage();
     }
-      public void setLabelImage() {
+
+    public void setLabelImage() {
         ImageIcon icon = new ImageIcon("D:\\ALL DATA OF CODING\\NetBeans-OOP-Java\\Election Management System\\src\\assets\\looginnn.jpeg");
         Image image = icon.getImage();
         Image scaledImage = image.getScaledInstance(540, 710, Image.SCALE_SMOOTH);
         ImageIcon scaledIcon = new ImageIcon(scaledImage);
         jLabel8.setIcon(scaledIcon);
     }
-   
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -101,7 +101,7 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
-        constituencyField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "VERIFY YOUR CONSTITUTENCIES ", "1. Lahore Gulshan Ravi NA-128", "2. Lahore Model Town NA-126", "3. Lahore Cantt NA-129", " ", "4. Karachi Saddar NA-247", "5. Karachi Korangi NA-241", "6. Karachi Malir NA-238", " ", "7. Islamabad G-10 NA-47", "8. Islamabad G-13 NA-48", "9. Islamabad I-8 NA-49", " ", "10. Rawalpindi Westridge NA-53", "11. Rawalpindi Chaklala NA-52", "12. Rawalpindi Dhoke Hassu NA-55" }));
+        constituencyField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "VERIFY YOUR CONSTITUTENCIES ", "1. NA-128 (Lahore)", "2. NA-126 (Lahore)", "3. NA-129 (Lahore)", " ", "4. NA-247 (Karachi)", "5. NA-241 (Karachi)", "6. NA-238 (Karachi)", " ", "7. NA-47 (Islamabad)", "8. NA-48 (Islamabad)", "9. NA-49 (Islamabad)", " ", "10. NA-53 (Rawalpindi)", "11. NA-52 (Rawalpindi)", "12. NA-55 (Rawalpindi)", " " }));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -177,43 +177,52 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_cnicActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
- String enteredCnic = cnic.getText().trim();
+        String enteredCnic = cnic.getText().trim();
 
-if (enteredCnic.isEmpty()) {
-    JOptionPane.showMessageDialog(this, "Please enter your CNIC", "Input Error", JOptionPane.WARNING_MESSAGE);
-    return;
-}
+        if (enteredCnic.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter your CNIC", "Input Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-try {
-    String selectedItem = (String) constituencyField.getSelectedItem();
+        String selectedItem = (String) constituencyField.getSelectedItem();
 
-    // If user did not select a valid constituency
-    if (selectedItem == null || selectedItem.trim().isEmpty() || selectedItem.toLowerCase().contains("verify")) {
-        JOptionPane.showMessageDialog(this, "Please select a valid constituency", "Input Error", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
+        if (selectedItem == null || selectedItem.trim().isEmpty() || selectedItem.toLowerCase().contains("verify")) {
+            JOptionPane.showMessageDialog(this, "Please select a valid constituency", "Input Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-    // Extract only the numeric ID part before the first dot
-    String selectedConstituencyId = selectedItem.split("\\.")[0].trim();
+// Extract only the numeric ID part before the first dot
+        String selectedConstituencyId = selectedItem.split("\\.")[0].trim();
 
-    String response = ClientSide.sendRequest("login;" + enteredCnic + ";" + selectedConstituencyId);
+// Do the login call in a background thread
+        new Thread(() -> {
+            try {
+                String response = ClientSide.sendRequest("login;" + enteredCnic + ";" + selectedConstituencyId);
 
+                // Update UI safely on Event Dispatch Thread
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    if (response.equalsIgnoreCase("admin")) {
+                        setVisible(false);
+                        dispose();
+                        new Admin().setVisible(true);
+                    } else if (response.equalsIgnoreCase("voter")) {
+                        driver.SessionData.voterCNIC = enteredCnic;
+                        driver.SessionData.voterConstituencyID = Integer.parseInt(selectedConstituencyId);
+                        setVisible(false);
+                        dispose();
+                        new USER().setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(Login.this, "Wrong credentials!", "Login Failed", JOptionPane.ERROR_MESSAGE);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    JOptionPane.showMessageDialog(Login.this, "Server communication failed", "Error", JOptionPane.ERROR_MESSAGE);
+                });
+            }
+        }).start();
 
-    if (response.equalsIgnoreCase("admin")) {
-        this.setVisible(false);
-        this.dispose();
-        new Admin().setVisible(true);
-    } else if (response.equalsIgnoreCase("voter")) {
-        this.setVisible(false);
-        this.dispose();
-        new USER().setVisible(true);
-    } else {
-        JOptionPane.showMessageDialog(this, "Wrong credentials!", "Login Failed", JOptionPane.ERROR_MESSAGE);
-    }
-} catch (Exception e) {
-    e.printStackTrace();
-    JOptionPane.showMessageDialog(this, "Server communication failed", "Error", JOptionPane.ERROR_MESSAGE);
-}
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -224,11 +233,11 @@ try {
     }//GEN-LAST:event_createActionPerformed
 
     private void createMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_createMouseEntered
-       create.setBorder(new MatteBorder(0,0,2,0,Color.WHITE));  
+        create.setBorder(new MatteBorder(0, 0, 2, 0, Color.WHITE));
     }//GEN-LAST:event_createMouseEntered
 
     private void createMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_createMouseExited
-       create.setBorder(null);
+        create.setBorder(null);
     }//GEN-LAST:event_createMouseExited
 
     public static void main(String args[]) {

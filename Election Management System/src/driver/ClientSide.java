@@ -38,28 +38,20 @@ public class ClientSide {
     }
 
     // Always reconnect before sending request
-    public static String sendRequest(String request) {
-        connectToServer();
+  public static String sendRequest(String request) {
+    connectToServer();
 
-        try {
-            out.println(request);
-
-            StringBuilder response = new StringBuilder();
-            String line;
-
-            while ((line = in.readLine()) != null) {
-                if (line.trim().isEmpty()) break;
-                response.append(line).append("\n");
-            }
-
-            return response.toString().trim();
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "❌ Communication error: " + e.getMessage(),
-                "Communication Error", JOptionPane.ERROR_MESSAGE);
-            return null;
-        } finally {
-            closeConnection();  // Close after each request
-        }
+    try {
+        out.println(request);
+        return in.readLine();  // Just read one line
+    } catch (IOException e) {
+        JOptionPane.showMessageDialog(null, "❌ Communication error: " + e.getMessage(),
+            "Communication Error", JOptionPane.ERROR_MESSAGE);
+        return null;
+    } finally {
+        closeConnection();  // Close after each request
     }
+}
+
 }
 

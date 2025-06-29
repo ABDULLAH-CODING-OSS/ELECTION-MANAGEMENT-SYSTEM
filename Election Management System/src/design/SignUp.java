@@ -184,7 +184,7 @@ public class SignUp extends javax.swing.JFrame {
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel11.setText("Constitutency");
 
-        constituencyField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "SELECT YOUR CONSTITUTENCIES ", "1. Lahore Gulshan Ravi NA-128", "2. Lahore Model Town NA-126", "3. Lahore Cantt NA-129", " ", "4. Karachi Saddar NA-247", "5. Karachi Korangi NA-241", "6. Karachi Malir NA-238", " ", "7. Islamabad G-10 NA-47", "8. Islamabad G-13 NA-48", "9. Islamabad I-8 NA-49", " ", "10. Rawalpindi Westridge NA-53", "11. Rawalpindi Chaklala NA-52", "12. Rawalpindi Dhoke Hassu NA-55" }));
+        constituencyField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "SELECT YOUR CONSTITUTENCIES ", "1. NA-128 (Lahore)", "2. NA-126 (Lahore)", "3. NA-129 (Lahore)", " ", "4. NA-247 (Karachi)", "5. NA-241 (Karachi)", "6. NA-238 (Karachi)", " ", "7. NA-47 (Islamabad)", "8. NA-48 (Islamabad)", "9. NA-49 (Islamabad)", " ", "10. NA-53 (Rawalpindi)", "11. NA-52 (Rawalpindi)", "12. NA-55 (Rawalpindi)", " " }));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);

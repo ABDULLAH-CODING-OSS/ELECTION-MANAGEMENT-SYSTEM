@@ -181,8 +181,8 @@ case "forcewin":
 
     private static Connection getConnection() throws SQLException {
         String url = "jdbc:mysql://localhost:3306/election_db";
-        String user = "root"; 
-        String password = "Singham@123"; 
+        String user = "Your username"; 
+        String password = "Your Password"; 
         return DriverManager.getConnection(url, user, password);
     }
 

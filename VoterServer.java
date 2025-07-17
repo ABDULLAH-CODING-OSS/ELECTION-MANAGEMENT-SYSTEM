@@ -1,11 +1,15 @@
+
 import java.util.List;
 import java.util.ArrayList;
 import java.io.*;
 import java.net.*;
 import java.sql.*;
 import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class VoterServer {
+
     private static final int PORT = 6789;
 
     public static void main(String[] args) {
@@ -21,227 +25,261 @@ public class VoterServer {
         }
     }
 
- private static void handleClient(Socket socket) {
-    try (
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        PrintWriter out = new PrintWriter(socket.getOutputStream(), true)
-    ) {
-        String request;
-        while ((request = in.readLine()) != null) {
-            System.out.println("📨 Request received: " + request);
+    private static void handleClient(Socket socket) {
+        try (
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream())); PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+            String request;
+            while ((request = in.readLine()) != null) {
+                System.out.println("📨 Request received: " + request);
 
-            if (request.isEmpty()) {
-                out.println("Invalid data: Empty request");
-                continue;
-            }
+                if (request.isEmpty()) {
+                    out.println("Invalid data: Empty request");
+                    continue;
+                }
 
-            String[] parts = request.split(";", 2);
-            String command = parts[0].toLowerCase();
-            String data = parts.length > 1 ? parts[1] : "";
-            System.out.println("📌 Command: " + command);
-            System.out.println("📌 Data: " + data);
+                String[] parts = request.split(";", 2);
+                String command = parts[0].toLowerCase();
+                String data = parts.length > 1 ? parts[1] : "";
+                System.out.println("📌 Command: " + command);
+                System.out.println("📌 Data: " + data);
 
-            switch (command) {
-                case "castvote":
-    String voterCNIC = in.readLine();
-    String candidateCNIC = in.readLine();
-    in.readLine(); // read and discard blank line
+                switch (command) {
+//                case "castvote":
+//    String voterCNIC = in.readLine();
+//    String candidateCNIC = in.readLine();
+//    in.readLine(); // read and discard blank line
+//
+//    String voteResult = castVote(voterCNIC, candidateCNIC);
+//    out.println(voteResult);
+//    break;
+// case "castvote":
+//    String voterCNIC = in.readLine();
+//    String candidateCNIC = in.readLine();
+//    in.readLine(); // read and discard blank line
+//
+//    if (!isVotingAllowed()) {
+//        out.println("Voting is not currently allowed. Please check the election schedule.");
+//    } else {
+//        String voteResult = castVote(voterCNIC, candidateCNIC);
+//        out.println(voteResult);
+//    }
+//    break;
+                    case "castvote": {
+                        String voterCNIC = in.readLine();
+                        String candidateCNIC = in.readLine();
+                        in.readLine(); // discard blank line
 
-    String voteResult = castVote(voterCNIC, candidateCNIC);
-    out.println(voteResult);
-    break;
-case "getresults": {
-    List<String> results = getElectionResults();
-    for (String row : results) {
-        out.println(row);
-    }
-    out.println(); // Marks end of transmission
-    break;
-}
+                        String status = checkVotingStatus(); // returns string message like "OK", "BEFORE", "AFTER"
 
-                case "insert":
-                    out.println(insertVoter(data));
-                    break;
-                case "addparty":
-                    out.println(insertParty(data));
-                    break;
-                case "updateparty":
-                    out.println(updateParty(data));
-                    break;
-                case "deleteparty":
-                    out.println(deleteParty(data));
-                    break;
-                case "getallparties":
-                    List<String> allParties = getAllParties();
-                    for (String line : allParties) {
-                        out.println(line);
-                    }
-                    out.println(); // Mark end of transmission
-                    break;
-                case "update":
-                    out.println(updateVoter(data));
-                    break;
-                case "delete":
-                    out.println(deleteVoter(data));
-                    break;
-                    case "getallvoters":
-    List<String> voters = getAllVoters();
-    for (String voter : voters) {
-        out.println(voter);
-    }
-    out.println(); // End of data
-    break;
-
-                case "addcandidate":
-                    out.println(insertCandidate(data));
-                    break;
-                case "updatecandidate":
-                    out.println(updateCandidate(data));
-                    break;
-                case "deletecandidate":
-                    out.println(deleteCandidate(data));
-                    break;
-                    case "getallcandidates":
-    List<String> candidates = getAllCandidates();
-    for (String row : candidates) {
-        out.println(row);
-    }
-    out.println(); // Send an empty line to signal end of data
-    break;
-    case "getcandidateresults":
-    List<String> candidateResults = getCandidateWiseResults();
-    for (String row : candidateResults) {
-        out.println(row);
-    }
-    out.println();  // End of data
-    break;
-    case "getpartyresults":
-    List<String> partyResults = getPartyResults();
-    for (String res : partyResults) {
-        out.println(res);
-    }
-    out.println(); // End of transmission
-    break;
-case "getvotehistory":
-    List<String> voteRecords = getVoteHistory();
-    for (String line : voteRecords) {
-        out.println(line);
-    }
-    out.println();  // send blank line to mark end of response
-    break;
-case "getallparties1":
-    List<String> parties = getAllParties1();
-    for (String line : parties) {
-        System.out.println("Sending line to client: " + line); // Debug
-        out.println(line);
-    }
-    out.println(); // End of transmission
-    break;
-case "forcewin":
-    if (data != null && !data.trim().isEmpty()) {
-        String partyId = data.trim();  // since client sends: forcewin\n102
-        String result = forceWin(partyId);
-        out.println(result);
-    } else {
-        out.println("ERROR: Party ID missing for forcewin.");
-    }
-    out.println(); // End of transmission
-    break;
-
-
-
-                case "login":
-                    String[] loginFields = data.split(";");
-                    if (loginFields.length != 2) {
-                        out.println("invalid");
+                        if (status.equals("OK")) {
+                            String voteResult = castVote(voterCNIC, candidateCNIC);
+                            out.println(voteResult);
+                        } else if (status.equals("BEFORE")) {
+                            out.println("Voting has not started yet. Please wait.");
+                        } else if (status.equals("AFTER")) {
+                            out.println("Voting has been closed.");
+                        } else {
+                            out.println("Voting is not currently allowed. Please contact admin.");
+                        }
                         break;
                     }
-                    String loginCnic = loginFields[0].trim();
-                    String loginConstituency = loginFields[1].trim();
-                    out.println(handleLogin(loginCnic, loginConstituency));
-                    break;
-              
-                default:
-                    out.println("Invalid Command");
+
+                    case "getresults": {
+                        List<String> results = getElectionResults();
+                        for (String row : results) {
+                            out.println(row);
+                        }
+                        out.println(); // Marks end of transmission
+                        break;
+                    }
+                    case "getelectiontime":
+                        out.println(getElectionTimeFromDB());
+                        break;
+
+                    case "insert":
+                        out.println(insertVoter(data));
+                        break;
+                    case "addparty":
+                        out.println(insertParty(data));
+                        break;
+                    case "addelectiontime":
+                        out.println(insertElectionTime(data));
+                        break;
+
+                    case "updateparty":
+                        out.println(updateParty(data));
+                        break;
+                    case "deleteparty":
+                        out.println(deleteParty(data));
+                        break;
+                    case "getallparties":
+                        List<String> allParties = getAllParties();
+                        for (String line : allParties) {
+                            out.println(line);
+                        }
+                        out.println(); // Mark end of transmission
+                        break;
+                    case "update":
+                        out.println(updateVoter(data));
+                        break;
+                    case "delete":
+                        out.println(deleteVoter(data));
+                        break;
+                    case "getallvoters":
+                        List<String> voters = getAllVoters();
+                        for (String voter : voters) {
+                            out.println(voter);
+                        }
+                        out.println(); // End of data
+                        break;
+
+                    case "addcandidate":
+                        out.println(insertCandidate(data));
+                        break;
+                    case "updatecandidate":
+                        out.println(updateCandidate(data));
+                        break;
+                    case "deletecandidate":
+                        out.println(deleteCandidate(data));
+                        break;
+                    case "getallcandidates":
+                        List<String> candidates = getAllCandidates();
+                        for (String row : candidates) {
+                            out.println(row);
+                        }
+                        out.println(); // Send an empty line to signal end of data
+                        break;
+                    case "getcandidateresults":
+                        List<String> candidateResults = getCandidateWiseResults();
+                        for (String row : candidateResults) {
+                            out.println(row);
+                        }
+                        out.println();  // End of data
+                        break;
+                    case "getpartyresults":
+                        List<String> partyResults = getPartyResults();
+                        for (String res : partyResults) {
+                            out.println(res);
+                        }
+                        out.println(); // End of transmission
+                        break;
+                    case "getvotehistory":
+                        List<String> voteRecords = getVoteHistory();
+                        for (String line : voteRecords) {
+                            out.println(line);
+                        }
+                        out.println();  // send blank line to mark end of response
+                        break;
+                    case "getallparties1":
+                        List<String> parties = getAllParties1();
+                        for (String line : parties) {
+                            System.out.println("Sending line to client: " + line); // Debug
+                            out.println(line);
+                        }
+                        out.println(); // End of transmission
+                        break;
+
+                    case "forcewin":
+                        if (data != null && !data.trim().isEmpty()) {
+                            String partyId = data.trim();  // since client sends: forcewin\n102
+                            String result = forceWin(partyId);
+                            out.println(result);
+                        } else {
+                            out.println("ERROR: Party ID missing for forcewin.");
+                        }
+                        out.println(); // End of transmission
+                        break;
+
+                    case "login":
+                        String[] loginFields = data.split(";");
+                        if (loginFields.length != 2) {
+                            out.println("invalid");
+                            break;
+                        }
+                        String loginCnic = loginFields[0].trim();
+                        String loginConstituency = loginFields[1].trim();
+                        out.println(handleLogin(loginCnic, loginConstituency));
+                        break;
+
+                    default:
+                        out.println("Invalid Command");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                socket.close();
+                System.out.println("Client disconnected.");
+            } catch (IOException e) {
+                System.out.println("Error closing socket: " + e.getMessage());
             }
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-    } finally {
-        try {
-            socket.close();
-            System.out.println("Client disconnected.");
-        } catch (IOException e) {
-            System.out.println("Error closing socket: " + e.getMessage());
-        }
     }
-}
-
-
 
     private static Connection getConnection() throws SQLException {
         String url = "jdbc:mysql://localhost:3306/election_db";
-        String user = "Your username"; 
-        String password = "Your Password"; 
+        String user = "root";
+        String password = "Singham@123";
         return DriverManager.getConnection(url, user, password);
     }
 
-private static String insertVoter(String data) {
-    String[] fields = data.split(",");
-   if (fields.length != 7) {
-    return "Invalid Data Format: Expected 7 fields, received " + fields.length;
-}
-
-
-    String cnic = fields[0].trim();
-    String name = fields[1].trim();
-    String ageStr = fields[2].trim();
-    String gender = fields[3].trim();
-    String address = fields[4].trim();
-    String city = fields[5].trim();
-    String constituencyIdStr = fields[6].trim();
-
-    if (cnic.isEmpty() || name.isEmpty() || ageStr.isEmpty() || gender.isEmpty() ||
-        address.isEmpty() || city.isEmpty() || constituencyIdStr.isEmpty()) {
-        return "Invalid Data: All fields are required.";
-    }
-
-    int age;
-    int constituencyId;
-    try {
-        age = Integer.parseInt(ageStr);
-        if (age <= 0) {
-            return "Invalid Data: Age must be a positive integer.";
+    private static String insertVoter(String data) {
+        String[] fields = data.split(",");
+        if (fields.length != 7) {
+            return "Invalid Data Format: Expected 7 fields, received " + fields.length;
         }
-    } catch (NumberFormatException e) {
-        return "Invalid Data: Age must be a valid integer.";
+
+        String cnic = fields[0].trim();
+        String name = fields[1].trim();
+        String ageStr = fields[2].trim();
+        String gender = fields[3].trim();
+        String address = fields[4].trim();
+        String city = fields[5].trim();
+        String constituencyIdStr = fields[6].trim();
+
+        if (cnic.isEmpty() || name.isEmpty() || ageStr.isEmpty() || gender.isEmpty()
+                || address.isEmpty() || city.isEmpty() || constituencyIdStr.isEmpty()) {
+            return "Invalid Data: All fields are required.";
+        }
+
+        int age;
+        int constituencyId;
+        try {
+            age = Integer.parseInt(ageStr);
+            if (age <= 0) {
+                return "Invalid Data: Age must be a positive integer.";
+            }
+        } catch (NumberFormatException e) {
+            return "Invalid Data: Age must be a valid integer.";
+        }
+
+        try {
+            constituencyId = Integer.parseInt(constituencyIdStr);
+        } catch (NumberFormatException e) {
+            return "Invalid Data: Constituency ID must be a valid integer.";
+        }
+
+        try (Connection conn = getConnection(); CallableStatement stmt = conn.prepareCall("{CALL InsertVoter(?, ?, ?, ?, ?, ?, ?)}")) {
+            stmt.setString(1, cnic);
+            stmt.setString(2, name);
+            stmt.setInt(3, age);
+            stmt.setString(4, gender);
+            stmt.setString(5, address);
+            stmt.setString(6, city);
+            stmt.setInt(7, constituencyId);
+
+            int rows = stmt.executeUpdate();
+            if (rows > 0) {
+                return "Voter Inserted Successfully";
+            } else {
+                return "Voter not inserted yet...";
+            }
+        } catch (Exception e) {
+            return "Error inserting voter: " + e.getMessage();
+        }
     }
 
-    try {
-        constituencyId = Integer.parseInt(constituencyIdStr);
-    } catch (NumberFormatException e) {
-        return "Invalid Data: Constituency ID must be a valid integer.";
-    }
-
-    try (Connection conn = getConnection();
-         CallableStatement stmt = conn.prepareCall("{CALL InsertVoter(?, ?, ?, ?, ?, ?, ?)}")) {
-        stmt.setString(1, cnic);
-        stmt.setString(2, name);
-        stmt.setInt(3, age);
-        stmt.setString(4, gender);
-        stmt.setString(5, address);
-        stmt.setString(6, city);
-        stmt.setInt(7, constituencyId);
-
-        int rows = stmt.executeUpdate();
-        if (rows > 0)
-            return "Voter Inserted Successfully";
-        else
-            return "Voter not inserted yet...";
-    } catch (Exception e) {
-        return "Error inserting voter: " + e.getMessage();
-    }
-}
 private static String insertParty(String data) {
     String[] fields = data.split(",");
     if (fields.length != 3) {
@@ -263,58 +301,67 @@ private static String insertParty(String data) {
         return "Invalid Data: Party ID must be a valid integer.";
     }
 
-    try (Connection conn = getConnection();
+    try (Connection conn = getConnection(); 
          CallableStatement stmt = conn.prepareCall("{CALL InsertParty(?, ?, ?)}")) {
+
         stmt.setInt(1, partyId);
         stmt.setString(2, partyName);
         stmt.setString(3, partySymbol);
 
         int rows = stmt.executeUpdate();
-        if (rows > 0)
+        if (rows > 0) {
             return "Party Inserted Successfully";
-        else
+        } else {
             return "Party not inserted.";
+        }
+
     } catch (SQLException e) {
+        // Check for SQLState "23000" which covers integrity constraint violations (PK/FK/UK)
+        if ("23000".equals(e.getSQLState()) || e.getMessage().toLowerCase().contains("duplicate")) {
+            return "Party with this ID already exists.";
+        }
         return "Error inserting party: " + e.getMessage();
     }
 }
-private static String updateParty(String data) {
-    String[] fields = data.split(",");
-    if (fields.length != 3) {
-        return "Invalid Data Format: Expected 3 fields (ID, Name, Symbol), received " + fields.length;
+
+    private static String updateParty(String data) {
+        String[] fields = data.split(",");
+        if (fields.length != 3) {
+            return "Invalid Data Format: Expected 3 fields (ID, Name, Symbol), received " + fields.length;
+        }
+
+        String partyIdStr = fields[0].trim();
+        String partyName = fields[1].trim();
+        String partySymbol = fields[2].trim();
+
+        if (partyIdStr.isEmpty() || partyName.isEmpty() || partySymbol.isEmpty()) {
+            return "Invalid Data: All fields are required.";
+        }
+
+        int partyId;
+        try {
+            partyId = Integer.parseInt(partyIdStr);
+        } catch (NumberFormatException e) {
+            return "Invalid Data: Party ID must be a valid integer.";
+        }
+
+        try (Connection conn = getConnection(); CallableStatement stmt = conn.prepareCall("{CALL UpdateParty(?, ?, ?)}")) {
+            stmt.setInt(1, partyId);
+            stmt.setString(2, partyName);
+            stmt.setString(3, partySymbol);
+
+            int rows = stmt.executeUpdate();
+            if (rows > 0) {
+                return "Party Updated Successfully";
+            } else {
+                return "Party not updated. Check Party ID.";
+            }
+        } catch (Exception e) {
+            return "Error updating party: " + e.getMessage();
+        }
     }
 
-    String partyIdStr = fields[0].trim();
-    String partyName = fields[1].trim();
-    String partySymbol = fields[2].trim();
-
-    if (partyIdStr.isEmpty() || partyName.isEmpty() || partySymbol.isEmpty()) {
-        return "Invalid Data: All fields are required.";
-    }
-
-    int partyId;
-    try {
-        partyId = Integer.parseInt(partyIdStr);
-    } catch (NumberFormatException e) {
-        return "Invalid Data: Party ID must be a valid integer.";
-    }
-
-    try (Connection conn = getConnection();
-         CallableStatement stmt = conn.prepareCall("{CALL UpdateParty(?, ?, ?)}")) {
-        stmt.setInt(1, partyId);
-        stmt.setString(2, partyName);
-        stmt.setString(3, partySymbol);
-
-        int rows = stmt.executeUpdate();
-        if (rows > 0)
-            return "Party Updated Successfully";
-        else
-            return "Party not updated. Check Party ID.";
-    } catch (Exception e) {
-        return "Error updating party: " + e.getMessage();
-    }
-}
-private static String deleteParty(String data) {
+    private static String deleteParty(String data) {
     String partyIdStr = data.trim();
 
     if (partyIdStr.isEmpty()) {
@@ -328,44 +375,45 @@ private static String deleteParty(String data) {
         return "Invalid Data: Party ID must be a valid integer.";
     }
 
-    try (Connection conn = getConnection();
-         CallableStatement stmt = conn.prepareCall("{CALL DeleteParty(?)}")) {
+    try (Connection conn = getConnection(); CallableStatement stmt = conn.prepareCall("{CALL DeleteParty(?)}")) {
         stmt.setInt(1, partyId);
 
         int rows = stmt.executeUpdate();
-        if (rows > 0)
+        if (rows > 0) {
             return "Party Deleted Successfully";
-        else
+        } else {
             return "Party not deleted. Check Party ID.";
-    } catch (Exception e) {
+        }
+    } catch (SQLException e) {
+        String message = e.getMessage().toLowerCase();
+        if (message.contains("foreign key") || message.contains("constraint")) {
+            return "Party cannot be deleted because it has associated candidates.";
+        }
         return "Error deleting party: " + e.getMessage();
     }
 }
-private static List<String> getAllParties() {
-    List<String> partyList = new ArrayList<>();
 
-    try (Connection conn = getConnection();
-         CallableStatement stmt = conn.prepareCall("{CALL GetAllParties()}");
-         ResultSet rs = stmt.executeQuery()) {
 
-        while (rs.next()) {
-            int id = rs.getInt("PartyID");
-            String name = rs.getString("Name");
-            String symbol = rs.getString("Symbol");
+    private static List<String> getAllParties() {
+        List<String> partyList = new ArrayList<>();
 
-            String line = id + "," + name + "," + symbol;
-            partyList.add(line);
+        try (Connection conn = getConnection(); CallableStatement stmt = conn.prepareCall("{CALL GetAllParties()}"); ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int id = rs.getInt("PartyID");
+                String name = rs.getString("Name");
+                String symbol = rs.getString("Symbol");
+
+                String line = id + "," + name + "," + symbol;
+                partyList.add(line);
+            }
+
+        } catch (SQLException e) {
+            partyList.add("Error: " + e.getMessage());
         }
 
-    } catch (SQLException e) {
-        partyList.add("Error: " + e.getMessage());
+        return partyList;
     }
-
-    return partyList;
-}
-
-
-
 
 private static String insertCandidate(String data) {
     String[] fields = data.split(",");
@@ -386,7 +434,7 @@ private static String insertCandidate(String data) {
         int partyId = Integer.parseInt(partyIdStr);
         int constituencyId = Integer.parseInt(constituencyIdStr);
 
-        try (Connection conn = getConnection();
+        try (Connection conn = getConnection(); 
              CallableStatement stmt = conn.prepareCall("{CALL InsertCandidate(?, ?, ?, ?)}")) {
             stmt.setString(1, cnic);
             stmt.setString(2, name);
@@ -400,45 +448,52 @@ private static String insertCandidate(String data) {
     } catch (NumberFormatException e) {
         return "Invalid Data: PartyID and ConstituencyID must be integers.";
     } catch (SQLException e) {
+        String msg = e.getMessage().toLowerCase();
+
+        if (msg.contains("foreign key") || msg.contains("duplicate") || msg.contains("unique")) {
+            return "Cannot insert: Candidate with this CNIC may already exist or invalid Party/Constituency.";
+        }
+
         return "Error inserting candidate: " + e.getMessage();
     }
 }
-private static String updateCandidate(String data) {
-    String[] fields = data.split(",");
-    if (fields.length != 4) {
-        return "Invalid Data Format: Expected 4 fields (CNIC, Name, PartyID, ConstituencyID)";
-    }
 
-    String cnic = fields[0].trim();
-    String name = fields[1].trim();
-    String partyIdStr = fields[2].trim();
-    String constituencyIdStr = fields[3].trim();
-
-    if (cnic.isEmpty() || name.isEmpty() || partyIdStr.isEmpty() || constituencyIdStr.isEmpty()) {
-        return "Invalid Data: All fields are required.";
-    }
-
-    try {
-        int partyId = Integer.parseInt(partyIdStr);
-        int constituencyId = Integer.parseInt(constituencyIdStr);
-
-        try (Connection conn = getConnection();
-             CallableStatement stmt = conn.prepareCall("{CALL UpdateCandidate(?, ?, ?, ?)}")) {
-            stmt.setString(1, cnic);
-            stmt.setString(2, name);
-            stmt.setInt(3, partyId);
-            stmt.setInt(4, constituencyId);
-
-            int rows = stmt.executeUpdate();
-            return rows > 0 ? "Candidate Updated Successfully" : "Candidate update failed";
+    private static String updateCandidate(String data) {
+        String[] fields = data.split(",");
+        if (fields.length != 4) {
+            return "Invalid Data Format: Expected 4 fields (CNIC, Name, PartyID, ConstituencyID)";
         }
 
-    } catch (NumberFormatException e) {
-        return "Invalid Data: PartyID and ConstituencyID must be integers.";
-    } catch (SQLException e) {
-        return "Error updating candidate: " + e.getMessage();
+        String cnic = fields[0].trim();
+        String name = fields[1].trim();
+        String partyIdStr = fields[2].trim();
+        String constituencyIdStr = fields[3].trim();
+
+        if (cnic.isEmpty() || name.isEmpty() || partyIdStr.isEmpty() || constituencyIdStr.isEmpty()) {
+            return "Invalid Data: All fields are required.";
+        }
+
+        try {
+            int partyId = Integer.parseInt(partyIdStr);
+            int constituencyId = Integer.parseInt(constituencyIdStr);
+
+            try (Connection conn = getConnection(); CallableStatement stmt = conn.prepareCall("{CALL UpdateCandidate(?, ?, ?, ?)}")) {
+                stmt.setString(1, cnic);
+                stmt.setString(2, name);
+                stmt.setInt(3, partyId);
+                stmt.setInt(4, constituencyId);
+
+                int rows = stmt.executeUpdate();
+                return rows > 0 ? "Candidate Updated Successfully" : "Candidate update failed";
+            }
+
+        } catch (NumberFormatException e) {
+            return "Invalid Data: PartyID and ConstituencyID must be integers.";
+        } catch (SQLException e) {
+            return "Error updating candidate: " + e.getMessage();
+        }
     }
-}
+
 private static String deleteCandidate(String data) {
     String cnic = data.trim();
 
@@ -446,340 +501,432 @@ private static String deleteCandidate(String data) {
         return "Invalid Data: Candidate CNIC is required.";
     }
 
-    try (Connection conn = getConnection();
-         CallableStatement stmt = conn.prepareCall("{CALL DeleteCandidate(?)}")) {
+    try (Connection conn = getConnection(); CallableStatement stmt = conn.prepareCall("{CALL DeleteCandidate(?)}")) {
         stmt.setString(1, cnic);
 
         int rows = stmt.executeUpdate();
-        return rows > 0 ? "Candidate Deleted Successfully" : "Candidate deletion failed";
-
+        return rows > 0 ? "Candidate Deleted Successfully" : "Candidate not found or already deleted.";
+        
     } catch (SQLException e) {
+        // Check if the exception is due to a foreign key constraint violation
+        String message = e.getMessage().toLowerCase();
+        if (message.contains("foreign key") || message.contains("constraint")) {
+            return "Cannot delete candidate: Candidate has already received votes.";
+        }
         return "Error deleting candidate: " + e.getMessage();
     }
 }
 
-
-
-  private static String updateVoter(String data) {
-    String[] fields = data.split(",");
-    if (fields.length != 7) {
-        return "Invalid Data Format: Expected 7 fields, received " + fields.length;
-    }
-
-    String cnic = fields[0].trim();
-    String name = fields[1].trim();
-    String ageStr = fields[2].trim();
-    String gender = fields[3].trim();
-    String address = fields[4].trim();
-    String city = fields[5].trim();
-    String constituencyIdStr = fields[6].trim();
-
-    if (cnic.isEmpty() || name.isEmpty() || ageStr.isEmpty() || gender.isEmpty() ||
-        address.isEmpty() || city.isEmpty() || constituencyIdStr.isEmpty()) {
-        return "Invalid Data: All fields are required.";
-    }
-
-    int age;
-    int constituencyId;
-    try {
-        age = Integer.parseInt(ageStr);
-        if (age <= 0) {
-            return "Invalid Data: Age must be a positive integer.";
+    private static String updateVoter(String data) {
+        String[] fields = data.split(",");
+        if (fields.length != 7) {
+            return "Invalid Data Format: Expected 7 fields, received " + fields.length;
         }
-    } catch (NumberFormatException e) {
-        return "Invalid Data: Age must be a valid integer.";
+
+        String cnic = fields[0].trim();
+        String name = fields[1].trim();
+        String ageStr = fields[2].trim();
+        String gender = fields[3].trim();
+        String address = fields[4].trim();
+        String city = fields[5].trim();
+        String constituencyIdStr = fields[6].trim();
+
+        if (cnic.isEmpty() || name.isEmpty() || ageStr.isEmpty() || gender.isEmpty()
+                || address.isEmpty() || city.isEmpty() || constituencyIdStr.isEmpty()) {
+            return "Invalid Data: All fields are required.";
+        }
+
+        int age;
+        int constituencyId;
+        try {
+            age = Integer.parseInt(ageStr);
+            if (age <= 0) {
+                return "Invalid Data: Age must be a positive integer.";
+            }
+        } catch (NumberFormatException e) {
+            return "Invalid Data: Age must be a valid integer.";
+        }
+
+        try {
+            constituencyId = Integer.parseInt(constituencyIdStr);
+        } catch (NumberFormatException e) {
+            return "Invalid Data: Constituency ID must be a valid integer.";
+        }
+
+        try (Connection conn = getConnection(); CallableStatement stmt = conn.prepareCall("{CALL UpdateVoter(?, ?, ?, ?, ?, ?, ?)}")) {
+            stmt.setString(1, cnic);
+            stmt.setString(2, name);
+            stmt.setInt(3, age);
+            stmt.setString(4, gender);
+            stmt.setString(5, address);
+            stmt.setString(6, city);
+            stmt.setInt(7, constituencyId);
+
+            int rows = stmt.executeUpdate();
+            if (rows > 0) {
+                return "Voter Updated Successfully";
+            } else {
+                return "No voter found with this CNIC to update.";
+            }
+        } catch (Exception e) {
+            return "Error updating voter: " + e.getMessage();
+        }
     }
 
-    try {
-        constituencyId = Integer.parseInt(constituencyIdStr);
-    } catch (NumberFormatException e) {
-        return "Invalid Data: Constituency ID must be a valid integer.";
+    private static String deleteVoter(String cnic) {
+        if (cnic == null || cnic.trim().isEmpty()) {
+            return "CNIC is required to delete a voter.";
+        }
+
+        try (Connection conn = getConnection(); CallableStatement stmt = conn.prepareCall("{CALL DeleteVoter(?)}")) {
+            stmt.setString(1, cnic.trim());
+
+            int rows = stmt.executeUpdate();
+            if (rows > 0) {
+                return "Voter Deleted Successfully";
+            } else {
+                return "No voter found with this CNIC to delete.";
+            }
+        } catch (SQLException e) {
+            // ✅ Custom message for foreign key constraint failure
+            String msg = e.getMessage().toLowerCase();
+            if (msg.contains("foreign key") || msg.contains("violates foreign key") || msg.contains("constraint")) {
+                return "Voter has already cast their vote and cannot be deleted.";
+            }
+            return "Error deleting voter: " + e.getMessage();
+        } catch (Exception e) {
+            return "Error deleting voter: " + e.getMessage();
+        }
     }
 
-    try (Connection conn = getConnection();
-         CallableStatement stmt = conn.prepareCall("{CALL UpdateVoter(?, ?, ?, ?, ?, ?, ?)}")) {
-        stmt.setString(1, cnic);
-        stmt.setString(2, name);
-        stmt.setInt(3, age);
-        stmt.setString(4, gender);
-        stmt.setString(5, address);
-        stmt.setString(6, city);
-        stmt.setInt(7, constituencyId);
+    private static String handleLogin(String cnic, String constituencyId) {
+        System.out.println("🔐 Login attempt: CNIC = " + cnic + ", Constituency ID = " + constituencyId);
 
-        int rows = stmt.executeUpdate();
-        if (rows > 0)
-            return "Voter Updated Successfully";
-        else
-            return "No voter found with this CNIC to update.";
-    } catch (Exception e) {
-        return "Error updating voter: " + e.getMessage();
-    }
-}
+        final String ADMIN_CNIC = "1234567890123";
+        if (cnic.equals(ADMIN_CNIC)) {
+            System.out.println("✅ Admin login");
+            return "admin";
+        }
 
-   private static String deleteVoter(String cnic) {
-    if (cnic == null || cnic.trim().isEmpty()) {
-        return "CNIC is required to delete a voter.";
-    }
+        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Voter WHERE CNIC = ? AND ConstituencyID = ?")) {
 
-    try (Connection conn = getConnection();
-         CallableStatement stmt = conn.prepareCall("{CALL DeleteVoter(?)}")) {
-        stmt.setString(1, cnic.trim());
+            stmt.setString(1, cnic);
+            stmt.setInt(2, Integer.parseInt(constituencyId));
 
-        int rows = stmt.executeUpdate();
-        if (rows > 0)
-            return "Voter Deleted Successfully";
-        else
-            return "No voter found with this CNIC to delete.";
-    } catch (Exception e) {
-        return "Error deleting voter: " + e.getMessage();
-    }
-}
-   
-private static String handleLogin(String cnic, String constituencyId) {
-    System.out.println("🔐 Login attempt: CNIC = " + cnic + ", Constituency ID = " + constituencyId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                System.out.println("✅ Voter found in DB");
+                return "voter";
+            } else {
+                System.out.println("❌ No voter found");
+                return "invalid";
+            }
 
-    final String ADMIN_CNIC = "1234567890123";
-    if (cnic.equals(ADMIN_CNIC)) {
-        System.out.println("✅ Admin login");
-        return "admin";
-    }
-
-    try (Connection conn = getConnection();
-         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Voter WHERE CNIC = ? AND ConstituencyID = ?")) {
-
-        stmt.setString(1, cnic);
-        stmt.setInt(2, Integer.parseInt(constituencyId));
-
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
-            System.out.println("✅ Voter found in DB");
-            return "voter";
-        } else {
-            System.out.println("❌ No voter found");
+        } catch (Exception e) {
+            e.printStackTrace();
             return "invalid";
         }
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        return "invalid";
-    }
-}
-private static List<String> getAllVoters() {
-    List<String> voterList = new ArrayList<>();
-
-    try (Connection conn = getConnection();
-         CallableStatement stmt = conn.prepareCall("{CALL GetAllVoters()}");
-         ResultSet rs = stmt.executeQuery()) {
-
-        while (rs.next()) {
-            String cnic = rs.getString("CNIC");
-            String name = rs.getString("Name");
-            int age = rs.getInt("Age");
-            String gender = rs.getString("Gender");
-            String address = rs.getString("Address");
-            String city = rs.getString("City");
-            String constituencyName = rs.getString("ConstituencyName");
-
-            String row = cnic + "," + name + "," + age + "," + gender + "," + address + "," + city + "," + constituencyName;
-            voterList.add(row);
-        }
-    } catch (SQLException e) {
-        voterList.add("Error: " + e.getMessage());
     }
 
-    return voterList;
-}
-private static List<String> getAllCandidates() {
-    List<String> candidateList = new ArrayList<>();
+    private static List<String> getAllVoters() {
+        List<String> voterList = new ArrayList<>();
 
-    try (Connection conn = getConnection();  
-         CallableStatement stmt = conn.prepareCall("{CALL GetAllCandidates()}");
-         ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = getConnection(); CallableStatement stmt = conn.prepareCall("{CALL GetAllVoters()}"); ResultSet rs = stmt.executeQuery()) {
 
-        while (rs.next()) {
-            String cnic = rs.getString("CNIC");
-            String name = rs.getString("CandidateName");
-            String partyName = rs.getString("PartyName");
-            String partySymbol = rs.getString("PartySymbol");
-            String constituencyName = rs.getString("ConstituencyName");
+            while (rs.next()) {
+                String cnic = rs.getString("CNIC");
+                String name = rs.getString("Name");
+                int age = rs.getInt("Age");
+                String gender = rs.getString("Gender");
+                String address = rs.getString("Address");
+                String city = rs.getString("City");
+                String constituencyName = rs.getString("ConstituencyName");
 
-            String row = cnic + "," + name + "," + partyName + "," + partySymbol + "," + constituencyName;
-            System.out.println("→ Sending row: " + row); // Log what’s being sent
-            candidateList.add(row);
+                String row = cnic + "," + name + "," + age + "," + gender + "," + address + "," + city + "," + constituencyName;
+                voterList.add(row);
+            }
+        } catch (SQLException e) {
+            voterList.add("Error: " + e.getMessage());
         }
 
-    } catch (SQLException e) {
-        String err = "Error: " + e.getMessage();
-        System.out.println(err); // Log error
-        candidateList.add(err);
+        return voterList;
     }
 
-    return candidateList;
-}
-private static String castVote(String voterCNIC, String candidateCNIC) {
-    try (Connection conn = getConnection();
-         CallableStatement stmt = conn.prepareCall("{CALL CastVote(?, ?)}")) {
+    private static List<String> getAllCandidates() {
+        List<String> candidateList = new ArrayList<>();
 
-        stmt.setString(1, voterCNIC);
-        stmt.setString(2, candidateCNIC);
+        try (Connection conn = getConnection(); CallableStatement stmt = conn.prepareCall("{CALL GetAllCandidates()}"); ResultSet rs = stmt.executeQuery()) {
 
-        stmt.execute();
-        return "SUCCESS";
+            while (rs.next()) {
+                String cnic = rs.getString("CNIC");
+                String name = rs.getString("CandidateName");
+                String partyName = rs.getString("PartyName");
+                String partySymbol = rs.getString("PartySymbol");
+                String constituencyName = rs.getString("ConstituencyName");
 
-    } catch (SQLException e) {
-        // If error indicates voter already voted
-        if (e.getMessage().contains("Duplicate entry")) {
-            return "ALREADY_VOTED";
-        }
-        return "ERROR: " + e.getMessage();
-    }
-}
-private static List<String> getElectionResults() {
-    List<String> results = new ArrayList<>();
+                String row = cnic + "," + name + "," + partyName + "," + partySymbol + "," + constituencyName;
+                System.out.println("→ Sending row: " + row); // Log what’s being sent
+                candidateList.add(row);
+            }
 
-    try (Connection conn = getConnection();
-         CallableStatement stmt = conn.prepareCall("{CALL GetElectionResults()}")) {
-
-        ResultSet rs = stmt.executeQuery();
-
-        while (rs.next()) {
-            String partyName = rs.getString("PartyName");
-            String partySymbol = rs.getString("PartySymbol");
-            int noOfCandidates = rs.getInt("NoOfCandidates");
-            int totalVotes = rs.getInt("TotalVotes");
-            int votesBehind = rs.getInt("VotesBehind");
-            String status = rs.getString("Status");
-
-            // Format: name;symbol;candidates;votes;behind;status
-            String row = partyName + ";" + partySymbol + ";" + noOfCandidates + ";" +
-                         totalVotes + ";" + votesBehind + ";" + status;
-
-            results.add(row);
+        } catch (SQLException e) {
+            String err = "Error: " + e.getMessage();
+            System.out.println(err); // Log error
+            candidateList.add(err);
         }
 
-        rs.close();
-    } catch (SQLException e) {
-        results.clear();
-        results.add("ERROR: " + e.getMessage());
+        return candidateList;
     }
 
-    return results;
-}
-private static List<String> getCandidateWiseResults() {
-    List<String> results = new ArrayList<>();
+    private static String castVote(String voterCNIC, String candidateCNIC) {
+        try (Connection conn = getConnection(); CallableStatement stmt = conn.prepareCall("{CALL CastVote(?, ?)}")) {
 
-    try (Connection conn = getConnection();
-         CallableStatement stmt = conn.prepareCall("{CALL GetCandidateWiseResults()}")) {
+            stmt.setString(1, voterCNIC);
+            stmt.setString(2, candidateCNIC);
 
-        ResultSet rs = stmt.executeQuery();
+            stmt.execute();
+            return "SUCCESS";
 
-        while (rs.next()) {
-            String candidateName = rs.getString("CandidateName");
-            String constituency = rs.getString("ConstituencyName");
-            String party = rs.getString("PartyName");
-            String symbol = rs.getString("PartySymbol");
-            int votes = rs.getInt("Votes");
-            String status = rs.getString("Status");
+        } catch (SQLException e) {
+            // If error indicates voter already voted
+            if (e.getMessage().contains("Duplicate entry")) {
+                return "ALREADY_VOTED";
+            }
+            return "ERROR: " + e.getMessage();
+        }
+    }
 
-            String row = candidateName + ";" + constituency + ";" + party + ";" + symbol + ";" + votes + ";" + status;
-            results.add(row);
+    private static List<String> getElectionResults() {
+        List<String> results = new ArrayList<>();
+
+        try (Connection conn = getConnection(); CallableStatement stmt = conn.prepareCall("{CALL GetElectionResults()}")) {
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String partyName = rs.getString("PartyName");
+                String partySymbol = rs.getString("PartySymbol");
+                int noOfCandidates = rs.getInt("NoOfCandidates");
+                int totalVotes = rs.getInt("TotalVotes");
+                int votesBehind = rs.getInt("VotesBehind");
+                String status = rs.getString("Status");
+
+                // Format: name;symbol;candidates;votes;behind;status
+                String row = partyName + ";" + partySymbol + ";" + noOfCandidates + ";"
+                        + totalVotes + ";" + votesBehind + ";" + status;
+
+                results.add(row);
+            }
+
+            rs.close();
+        } catch (SQLException e) {
+            results.clear();
+            results.add("ERROR: " + e.getMessage());
         }
 
-        rs.close();
-    } catch (SQLException e) {
-        results.clear();
-        results.add("ERROR: " + e.getMessage());
+        return results;
     }
 
-    return results;
-}
-private static List<String> getPartyResults() {
-    List<String> partyResults = new ArrayList<>();
+    private static List<String> getCandidateWiseResults() {
+        List<String> results = new ArrayList<>();
 
-    try (Connection conn = getConnection();
-         CallableStatement stmt = conn.prepareCall("{CALL GetPartySeatsWon()}")) {
+        try (Connection conn = getConnection(); CallableStatement stmt = conn.prepareCall("{CALL GetCandidateWiseResults()}")) {
 
-        ResultSet rs = stmt.executeQuery();
+            ResultSet rs = stmt.executeQuery();
 
-        while (rs.next()) {
-            String partyName = rs.getString("PartyName");
-            String partySymbol = rs.getString("PartySymbol");
-            int seatsWon = rs.getInt("SeatsWon");
+            while (rs.next()) {
+                String candidateName = rs.getString("CandidateName");
+                String constituency = rs.getString("ConstituencyName");
+                String party = rs.getString("PartyName");
+                String symbol = rs.getString("PartySymbol");
+                int votes = rs.getInt("Votes");
+                String status = rs.getString("Status");
 
-            // Format as: name;symbol;seats
-            String row = partyName + ";" + partySymbol + ";" + seatsWon;
-            partyResults.add(row);
+                String row = candidateName + ";" + constituency + ";" + party + ";" + symbol + ";" + votes + ";" + status;
+                results.add(row);
+            }
+
+            rs.close();
+        } catch (SQLException e) {
+            results.clear();
+            results.add("ERROR: " + e.getMessage());
         }
 
-        rs.close();
-    } catch (SQLException e) {
-        partyResults.clear();
-        partyResults.add("ERROR: " + e.getMessage());
+        return results;
     }
 
-    return partyResults;
-}
-private static List<String> getVoteHistory() {
-    List<String> voteHistory = new ArrayList<>();
+    private static List<String> getPartyResults() {
+        List<String> partyResults = new ArrayList<>();
 
-    try (Connection conn = getConnection();
-         CallableStatement stmt = conn.prepareCall("{CALL GetVoteHistory()}");
-         ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = getConnection(); CallableStatement stmt = conn.prepareCall("{CALL GetPartySeatsWon()}")) {
 
-        while (rs.next()) {
-            String voterName = rs.getString("VoterName");
-            String candidateName = rs.getString("CandidateName");
-            String partyName = rs.getString("PartyName");
-            String voteTime = rs.getTimestamp("VoteTime").toString();
+            ResultSet rs = stmt.executeQuery();
 
-            voteHistory.add(voterName + ";" + candidateName + ";" + partyName + ";" + voteTime);
+            while (rs.next()) {
+                String partyName = rs.getString("PartyName");
+                String partySymbol = rs.getString("PartySymbol");
+                int seatsWon = rs.getInt("SeatsWon");
+
+                // Format as: name;symbol;seats
+                String row = partyName + ";" + partySymbol + ";" + seatsWon;
+                partyResults.add(row);
+            }
+
+            rs.close();
+        } catch (SQLException e) {
+            partyResults.clear();
+            partyResults.add("ERROR: " + e.getMessage());
         }
 
-    } catch (SQLException e) {
-        voteHistory.add("ERROR: " + e.getMessage());
+        return partyResults;
     }
 
-    return voteHistory;
-}
-private static List<String> getAllParties1() {
-    List<String> allParties = new ArrayList<>();
+    private static List<String> getVoteHistory() {
+        List<String> voteHistory = new ArrayList<>();
 
-    try (Connection conn = getConnection();
-         CallableStatement stmt = conn.prepareCall("{CALL GetAllParties1()}");
-         ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = getConnection(); CallableStatement stmt = conn.prepareCall("{CALL GetVoteHistory()}"); ResultSet rs = stmt.executeQuery()) {
 
-        while (rs.next()) {
-             String partyId = rs.getString("PartyID");
-            String partyName = rs.getString("Name");
-            String partySymbol = rs.getString("Symbol");
-           
+            while (rs.next()) {
+                String voterName = rs.getString("VoterName");
+                String candidateName = rs.getString("CandidateName");
+                String partyName = rs.getString("PartyName");
+                String voteTime = rs.getTimestamp("VoteTime").toString();
 
-           allParties.add(partyId + ";" + partyName + ";" + partySymbol);
+                voteHistory.add(voterName + ";" + candidateName + ";" + partyName + ";" + voteTime);
+            }
 
+        } catch (SQLException e) {
+            voteHistory.add("ERROR: " + e.getMessage());
         }
 
-    } catch (SQLException e) {
-        allParties.add("ERROR: " + e.getMessage());
+        return voteHistory;
     }
 
-    return allParties;
-}
-private static String forceWin(String partyId) {
-    try (Connection conn = getConnection();
-         CallableStatement stmt = conn.prepareCall("{CALL ForceWin(?)}")) {
+    private static List<String> getAllParties1() {
+        List<String> allParties = new ArrayList<>();
 
-        stmt.setInt(1, Integer.parseInt(partyId));
-        stmt.execute();
+        try (Connection conn = getConnection(); CallableStatement stmt = conn.prepareCall("{CALL GetAllParties1()}"); ResultSet rs = stmt.executeQuery()) {
 
-        return "Force win executed successfully for Party ID " + partyId;
+            while (rs.next()) {
+                String partyId = rs.getString("PartyID");
+                String partyName = rs.getString("Name");
+                String partySymbol = rs.getString("Symbol");
 
-    } catch (SQLException e) {
-        return "ERROR: " + e.getMessage();
+                allParties.add(partyId + ";" + partyName + ";" + partySymbol);
+
+            }
+
+        } catch (SQLException e) {
+            allParties.add("ERROR: " + e.getMessage());
+        }
+
+        return allParties;
     }
+
+    private static String forceWin(String partyId) {
+        try (Connection conn = getConnection(); CallableStatement stmt = conn.prepareCall("{CALL ForceWin(?)}")) {
+
+            stmt.setInt(1, Integer.parseInt(partyId));
+            stmt.execute();
+
+            return "Force win executed successfully for Party ID " + partyId;
+
+        } catch (SQLException e) {
+            return "ERROR: " + e.getMessage();
+        }
+    }
+
+    private static boolean isVotingAllowed() {
+        try (Connection conn = getConnection(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT election_date, start_time, end_time FROM election_schedule LIMIT 1")) {
+
+            if (rs.next()) {
+                LocalDate electionDate = rs.getDate("election_date").toLocalDate();
+                LocalTime startTime = rs.getTime("start_time").toLocalTime();
+                LocalTime endTime = rs.getTime("end_time").toLocalTime();
+
+                LocalDate today = LocalDate.now();
+                LocalTime now = LocalTime.now();
+
+                // Check if today is the election day
+                if (!today.equals(electionDate)) {
+                    return false;
+                }
+
+                // Check time range
+                return !now.isBefore(startTime) && !now.isAfter(endTime);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false; // Default to not allowed if any error
+    }
+
+    private static String insertElectionTime(String data) {
+        String[] parts = data.split(",");
+        if (parts.length != 3) {
+            return "Invalid Data Format: Expected date,start,end";
+        }
+
+        String date = parts[0].trim();      // format: YYYY-MM-DD
+        String startTime = parts[1].trim(); // format: HH:mm
+        String endTime = parts[2].trim();   // format: HH:mm
+
+        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(
+                "INSERT INTO election_schedule (election_date, start_time, end_time) VALUES (?, ?, ?)")) {
+            stmt.setDate(1, java.sql.Date.valueOf(date));
+            stmt.setTime(2, java.sql.Time.valueOf(startTime + ":00"));
+            stmt.setTime(3, java.sql.Time.valueOf(endTime + ":00"));
+
+            int rows = stmt.executeUpdate();
+            if (rows > 0) {
+                return "Election timing inserted successfully.";
+            } else {
+                return "Failed to insert election timing.";
+            }
+        } catch (SQLException e) {
+            return "DB Error: " + e.getMessage();
+        }
+    }
+
+    private static String checkVotingStatus() {
+        try (Connection conn = getConnection(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT election_date, start_time, end_time FROM election_schedule ORDER BY id DESC LIMIT 1")) {
+
+            if (rs.next()) {
+                LocalDate date = rs.getDate("election_date").toLocalDate();
+                LocalTime start = rs.getTime("start_time").toLocalTime();
+                LocalTime end = rs.getTime("end_time").toLocalTime();
+
+                LocalDate today = LocalDate.now();
+                LocalTime now = LocalTime.now();
+
+                if (date.isAfter(today) || (date.equals(today) && now.isBefore(start))) {
+                    return "BEFORE";  // Voting has not started yet
+                } else if (date.isBefore(today) || (date.equals(today) && now.isAfter(end))) {
+                    return "AFTER";   // Voting ended
+                } else {
+                    return "OK";      // Voting is open
+                }
+            } else {
+                return "NO_SCHEDULE";
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "ERROR";
+        }
+    }
+
+    private static String getElectionTimeFromDB() {
+        try (Connection conn = getConnection(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT election_date, start_time, end_time FROM election_schedule ORDER BY id DESC LIMIT 1")) {
+
+            if (rs.next()) {
+                return rs.getString("election_date") + "," + rs.getString("start_time") + "," + rs.getString("end_time");
+            } else {
+                return "ERROR: No election schedule set.";
+            }
+        } catch (SQLException e) {
+            return "ERROR: " + e.getMessage();
+        }
+    }
+
 }
-
-
-}
-
-
-    

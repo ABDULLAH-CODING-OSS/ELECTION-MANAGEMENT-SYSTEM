@@ -1,4 +1,5 @@
 package design;
+
 import design.USER;
 import static design.USER.voteHistoryTableModel;
 import java.time.LocalDate;
@@ -19,54 +20,59 @@ import javax.swing.border.MatteBorder;
 import javax.swing.table.DefaultTableModel;
 
 public class Admin extends javax.swing.JFrame {
-DefaultTableModel partyTableModel1;
 
-DefaultTableModel candidateResultTableModel;
-DefaultTableModel resultPartyTableModel;
-public static DefaultTableModel voteHistoryTableModel;
+    DefaultTableModel partyTableModel1;
 
-DefaultTableModel partyTableModel;
-DefaultTableModel voterTableModel;
-DefaultTableModel resultTableModel;
-DefaultTableModel candidateTableModel;
+    DefaultTableModel candidateResultTableModel;
+    DefaultTableModel resultPartyTableModel;
+    public static DefaultTableModel voteHistoryTableModel;
+
+    DefaultTableModel partyTableModel;
+    DefaultTableModel voterTableModel;
+    DefaultTableModel resultTableModel;
+    DefaultTableModel candidateTableModel;
+
     public Admin() {
-       
+
         initComponents();
-              if (ClientSide.socket == null || ClientSide.socket.isClosed()) {
-        ClientSide.connectToServer();
-  }
-              loadElectionScheduleToLabels(); 
-partyTableModel1 = (DefaultTableModel) partyTable.getModel();
-partyTableModel1.setRowCount(0);
+        if (ClientSide.socket == null || ClientSide.socket.isClosed()) {
+            ClientSide.connectToServer();
+        }
 
-voterTableModel = (DefaultTableModel) voterTablee.getModel();
-voterTableModel.setRowCount(0);
-partyTableModel = (DefaultTableModel) candidateParty.getModel();
-partyTableModel.setRowCount(0);
-resultTableModel = (DefaultTableModel) resultTable.getModel();
-resultTableModel.setRowCount(0);
-candidateTableModel = (DefaultTableModel) candidateTable.getModel();
-candidateTableModel.setRowCount(0);
-candidateResultTableModel = (DefaultTableModel) candidateResultTable.getModel();
-candidateResultTableModel.setRowCount(0);  // Clear any existing data
-resultPartyTableModel = (DefaultTableModel) resultPartyTable.getModel();
-resultPartyTableModel.setRowCount(0);
-voteHistoryTableModel = (DefaultTableModel) voteHistoryTable.getModel();
-voteHistoryTableModel.setRowCount(0); 
-try {
-    loadPartyTable();
-    loadResultTableData();
-    loadVoterTableData(); 
-    loadCandidateTableData();
-    loadCandidateResultTableData();
-    loadPartyResultTableData();
-    loadVoteHistoryTableData();
-} catch (Exception e) {
-    JOptionPane.showMessageDialog(this, "Error loading admin data: " + e.getMessage());
-    e.printStackTrace();
-}
+        partyTableModel1 = (DefaultTableModel) partyTable.getModel();
+        partyTableModel1.setRowCount(0);
 
-  
+        voterTableModel = (DefaultTableModel) voterTablee.getModel();
+        voterTableModel.setRowCount(0);
+        partyTableModel = (DefaultTableModel) candidateParty.getModel();
+        partyTableModel.setRowCount(0);
+        resultTableModel = (DefaultTableModel) resultTable.getModel();
+        resultTableModel.setRowCount(0);
+        candidateTableModel = (DefaultTableModel) candidateTable.getModel();
+        candidateTableModel.setRowCount(0);
+        candidateResultTableModel = (DefaultTableModel) candidateResultTable.getModel();
+        candidateResultTableModel.setRowCount(0);  // Clear any existing data
+        resultPartyTableModel = (DefaultTableModel) resultPartyTable.getModel();
+        resultPartyTableModel.setRowCount(0);
+        voteHistoryTableModel = (DefaultTableModel) voteHistoryTable.getModel();
+        voteHistoryTableModel.setRowCount(0);
+        try {
+            loadPartyTable();
+            loadResultTableData();
+            loadVoterTableData();
+            loadCandidateTableData();
+            loadCandidateResultTableData();
+            loadPartyResultTableData();
+            loadVoteHistoryTableData();
+            loadPartiesIntoCandidateTable();
+            loadPartyTable();
+            loadElectionScheduleToLabels();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error loading admin data: " + e.getMessage());
+            e.printStackTrace();
+        }
+
     }
 
     @SuppressWarnings("unchecked")
@@ -123,6 +129,7 @@ try {
         voterTablee = new javax.swing.JTable();
         jScrollPane6 = new javax.swing.JScrollPane();
         candidateTable = new javax.swing.JTable();
+        jButton14 = new javax.swing.JButton();
         jPanel11 = new javax.swing.JPanel();
         jLabel21 = new javax.swing.JLabel();
         corruption = new javax.swing.JPanel();
@@ -189,7 +196,7 @@ try {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/coalition.png"))); // NOI18N
-        jLabel2.setText("Add Party");
+        jLabel2.setText("Party & Time");
         jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel2MouseClicked(evt);
@@ -327,13 +334,14 @@ try {
                             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(6, 6, 6)
-                                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -534,7 +542,7 @@ try {
 
         nameField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         nameField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        nameField.setToolTipText("Enter your name ?");
+        nameField.setToolTipText("Enter Your Name");
         nameField.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(255, 255, 255)));
         nameField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -757,16 +765,27 @@ try {
         ));
         jScrollPane6.setViewportView(candidateTable);
 
+        jButton14.setFont(new java.awt.Font("Segoe UI", 3, 14)); // NOI18N
+        jButton14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/refresh.png"))); // NOI18N
+        jButton14.setText("Refresh");
+        jButton14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton14ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(voterTable, javax.swing.GroupLayout.DEFAULT_SIZE, 705, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 542, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton14))
+                    .addComponent(voterTable, javax.swing.GroupLayout.DEFAULT_SIZE, 705, Short.MAX_VALUE))
                 .addGap(25, 25, 25))
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 542, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -774,7 +793,11 @@ try {
                 .addGap(20, 20, 20)
                 .addComponent(voterTable, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton14)))
                 .addContainerGap())
         );
 
@@ -977,6 +1000,7 @@ try {
 
         candidateName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         candidateName.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        candidateName.setToolTipText("Enter Candidate Name");
         candidateName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 candidateNameActionPerformed(evt);
@@ -1004,6 +1028,7 @@ try {
 
         candidateCnic.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         candidateCnic.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        candidateCnic.setToolTipText("Enter Candidate CNIC");
         candidateCnic.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 candidateCnicActionPerformed(evt);
@@ -1166,10 +1191,11 @@ try {
         Party.setBackground(new java.awt.Color(204, 255, 204));
 
         jPanel8.setBackground(new java.awt.Color(204, 255, 204));
-        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "PARTY PORTAL", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(0, 204, 102))); // NOI18N
+        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "PARTY PORTAL", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 3, 18), new java.awt.Color(0, 204, 102))); // NOI18N
 
         partyNameField.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         partyNameField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        partyNameField.setToolTipText("Enter Party Name ");
         partyNameField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 partyNameFieldActionPerformed(evt);
@@ -1197,6 +1223,7 @@ try {
 
         partySymbolField.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         partySymbolField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        partySymbolField.setToolTipText("Enter Party Symbol");
         partySymbolField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 partySymbolFieldActionPerformed(evt);
@@ -1205,6 +1232,7 @@ try {
 
         partyIdField.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         partyIdField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        partyIdField.setToolTipText("Enter Party ID");
         partyIdField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 partyIdFieldActionPerformed(evt);
@@ -1286,7 +1314,7 @@ try {
         jLabel20.setText("WELCOME TO PARTY PORTAL");
 
         jPanel6.setBackground(new java.awt.Color(204, 255, 204));
-        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "SELECT DATE & TIME", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 3, 14))); // NOI18N
+        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "SELECT DATE & TIME", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 3, 18), new java.awt.Color(0, 204, 102))); // NOI18N
 
         jLabel26.setFont(new java.awt.Font("Segoe UI", 3, 14)); // NOI18N
         jLabel26.setText("Election Date (YYYY-MM-DD):");
@@ -1325,6 +1353,7 @@ try {
         });
 
         jButton13.setFont(new java.awt.Font("Segoe UI", 3, 14)); // NOI18N
+        jButton13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/bookmark.png"))); // NOI18N
         jButton13.setText("SAVE");
         jButton13.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1353,7 +1382,7 @@ try {
                         .addComponent(txtEndTime, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(91, 91, 91)
                         .addComponent(jButton13)))
-                .addContainerGap(120, Short.MAX_VALUE))
+                .addContainerGap(100, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1397,7 +1426,7 @@ try {
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(445, Short.MAX_VALUE))
+                .addContainerGap(431, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Add Candidates", Party);
@@ -1413,7 +1442,7 @@ try {
     }//GEN-LAST:event_partyNameFieldActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-    addParty();
+        addParty();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void partySymbolFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_partySymbolFieldActionPerformed
@@ -1429,7 +1458,7 @@ try {
     }//GEN-LAST:event_candidateNameActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-   addCandidate();     // TODO add your handling code here:
+        addCandidate();     // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void candidateCnicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_candidateCnicActionPerformed
@@ -1437,11 +1466,11 @@ try {
     }//GEN-LAST:event_candidateCnicActionPerformed
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-          jTabbedPane1.setSelectedIndex(5);
+        jTabbedPane1.setSelectedIndex(5);
     }//GEN-LAST:event_jLabel2MouseClicked
 
     private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
-          jTabbedPane1.setSelectedIndex(4);
+        jTabbedPane1.setSelectedIndex(4);
     }//GEN-LAST:event_jLabel3MouseClicked
 
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
@@ -1449,31 +1478,31 @@ try {
     }//GEN-LAST:event_jLabel4MouseClicked
 
     private void jLabel2MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseEntered
-         jLabel2.setBorder(new MatteBorder(0,0,2,0,Color.WHITE));
+        jLabel2.setBorder(new MatteBorder(0, 0, 2, 0, Color.WHITE));
     }//GEN-LAST:event_jLabel2MouseEntered
 
     private void jLabel2MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseExited
-         jLabel2.setBorder(null);
+        jLabel2.setBorder(null);
     }//GEN-LAST:event_jLabel2MouseExited
 
     private void jLabel3MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseEntered
-        jLabel3.setBorder(new MatteBorder(0,0,2,0,Color.WHITE));
+        jLabel3.setBorder(new MatteBorder(0, 0, 2, 0, Color.WHITE));
     }//GEN-LAST:event_jLabel3MouseEntered
 
     private void jLabel3MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseExited
-         jLabel3.setBorder(null);
+        jLabel3.setBorder(null);
     }//GEN-LAST:event_jLabel3MouseExited
 
     private void jLabel4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseEntered
-        jLabel4.setBorder(new MatteBorder(0,0,2,0,Color.WHITE));
+        jLabel4.setBorder(new MatteBorder(0, 0, 2, 0, Color.WHITE));
     }//GEN-LAST:event_jLabel4MouseEntered
 
     private void jLabel4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseExited
-         jLabel4.setBorder(null);
+        jLabel4.setBorder(null);
     }//GEN-LAST:event_jLabel4MouseExited
 
     private void jLabel5MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseEntered
-         jLabel5.setBorder(new MatteBorder(0,0,2,0,Color.WHITE));
+        jLabel5.setBorder(new MatteBorder(0, 0, 2, 0, Color.WHITE));
     }//GEN-LAST:event_jLabel5MouseEntered
 
     private void jLabel5MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseExited
@@ -1481,19 +1510,19 @@ try {
     }//GEN-LAST:event_jLabel5MouseExited
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-      deleteParty();      // TODO add your handling code here:
+        deleteParty();      // TODO add your handling code here:
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-     updateParty();
+        updateParty();
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-deleteCandidate();       // TODO add your handling code here:
+        deleteCandidate();       // TODO add your handling code here:
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-updateCandidate(); // TODO add your handling code here:
+        updateCandidate(); // TODO add your handling code here:
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void candidateConstituencyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_candidateConstituencyActionPerformed
@@ -1501,38 +1530,38 @@ updateCandidate(); // TODO add your handling code here:
     }//GEN-LAST:event_candidateConstituencyActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        loadPartiesIntoCandidateTable(); 
-loadPartyTable();// TODO add your handling code here:
+        loadPartiesIntoCandidateTable();
+        loadPartyTable();// TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
-  this.setVisible(false);   
+        this.setVisible(false);
         this.dispose();
         new Login().setVisible(true);
     }//GEN-LAST:event_jLabel5MouseClicked
 
     private void jLabel7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseClicked
-       jTabbedPane1.setSelectedIndex(1);
+        jTabbedPane1.setSelectedIndex(1);
     }//GEN-LAST:event_jLabel7MouseClicked
 
     private void jLabel7MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseEntered
-       jLabel7.setBorder(new MatteBorder(0,0,2,0,Color.WHITE));// TODO add your handling code here:
+        jLabel7.setBorder(new MatteBorder(0, 0, 2, 0, Color.WHITE));// TODO add your handling code here:
     }//GEN-LAST:event_jLabel7MouseEntered
 
     private void jLabel7MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseExited
-       jLabel7.setBorder(null); // TODO add your handling code here:
+        jLabel7.setBorder(null); // TODO add your handling code here:
     }//GEN-LAST:event_jLabel7MouseExited
 
     private void jLabel8MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MouseClicked
-      jTabbedPane1.setSelectedIndex(2);
+        jTabbedPane1.setSelectedIndex(2);
     }//GEN-LAST:event_jLabel8MouseClicked
 
     private void jLabel8MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MouseEntered
-       jLabel8.setBorder(new MatteBorder(0,0,2,0,Color.WHITE)); // TODO add your handling code here:
+        jLabel8.setBorder(new MatteBorder(0, 0, 2, 0, Color.WHITE)); // TODO add your handling code here:
     }//GEN-LAST:event_jLabel8MouseEntered
 
     private void jLabel8MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MouseExited
-    jLabel8.setBorder(null); // TODO add your handling code here:
+        jLabel8.setBorder(null); // TODO add your handling code here:
     }//GEN-LAST:event_jLabel8MouseExited
 
     private void cityFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cityFieldActionPerformed
@@ -1560,31 +1589,31 @@ loadPartyTable();// TODO add your handling code here:
     }//GEN-LAST:event_cnicFieldActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-updateVoter(); 
+        updateVoter();
 //loadVoterTableData();// TODO add your handling code here:
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-deleteVoter();
+        deleteVoter();
 //loadVoterTableData();// TODO add your handling code here:
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jLabel16MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel16MouseClicked
-          jTabbedPane1.setSelectedIndex(3);
+        jTabbedPane1.setSelectedIndex(3);
     }//GEN-LAST:event_jLabel16MouseClicked
 
     private void jLabel16MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel16MouseEntered
-      jLabel16.setBorder(new MatteBorder(0,0,2,0,Color.WHITE));
+        jLabel16.setBorder(new MatteBorder(0, 0, 2, 0, Color.WHITE));
     }//GEN-LAST:event_jLabel16MouseEntered
 
     private void jLabel16MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel16MouseExited
-        jLabel16.setBorder(null); 
+        jLabel16.setBorder(null);
     }//GEN-LAST:event_jLabel16MouseExited
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
-          loadResultTableData();
-          loadElectionScheduleToLabels(); 
-          loadVoterTableData();
+        loadResultTableData();
+        loadElectionScheduleToLabels();
+        loadVoterTableData();
         loadCandidateTableData();
     }//GEN-LAST:event_jButton12ActionPerformed
 
@@ -1615,193 +1644,212 @@ deleteVoter();
     }//GEN-LAST:event_txtEndTimeActionPerformed
 
     private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton13ActionPerformed
-addElectionTime();
+        addElectionTime();
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton13ActionPerformed
-  private void addElectionTime() {
-    String dateStr = txtElectionDate.getText().trim();     // e.g., "2025-07-15"
-    String startStr = txtStartTime.getText().trim();       // e.g., "09:00"
-    String endStr = txtEndTime.getText().trim();           // e.g., "17:00"
 
-    try {
-        // Parse for validation
-        LocalDate electionDate = LocalDate.parse(dateStr);
-        LocalTime startTime = LocalTime.parse(startStr);
-        LocalTime endTime = LocalTime.parse(endStr);
+    private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
+        loadPartyTable();
+        loadResultTableData();
+        loadVoterTableData();
+        loadCandidateTableData();
+        loadCandidateResultTableData();
+        loadPartyResultTableData();
+        loadVoteHistoryTableData();        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton14ActionPerformed
+    private void addElectionTime() {
+        String dateStr = txtElectionDate.getText().trim();     // e.g., "2025-07-15"
+        String startStr = txtStartTime.getText().trim();       // e.g., "09:00"
+        String endStr = txtEndTime.getText().trim();           // e.g., "17:00"
 
-        LocalDate today = LocalDate.now();
-        LocalTime now = LocalTime.now();
+        try {
+            // Parse for validation
+            LocalDate electionDate = LocalDate.parse(dateStr);
+            LocalTime startTime = LocalTime.parse(startStr);
+            LocalTime endTime = LocalTime.parse(endStr);
 
-        // Validation checks
-        if (electionDate.isBefore(today)) {
-            JOptionPane.showMessageDialog(this, "Election date cannot be in the past.");
-            return;
+            LocalDate today = LocalDate.now();
+            LocalTime now = LocalTime.now();
+
+            // Validation checks
+            if (electionDate.isBefore(today)) {
+                JOptionPane.showMessageDialog(this, "Election date cannot be in the past.");
+                return;
+            }
+
+            if (!startTime.isBefore(endTime)) {
+                JOptionPane.showMessageDialog(this, "Start time must be before end time.");
+                return;
+            }
+
+            if (electionDate.equals(today) && startTime.isBefore(now)) {
+                JOptionPane.showMessageDialog(this, "Start time must be in the future.");
+                return;
+            }
+
+            // 🔌 Make sure connection is active
+            if (!ClientSide.isConnected()) {
+                ClientSide.connectToServer();
+            }
+
+            // Build and send the command
+            String data = String.join(",", dateStr, startStr, endStr);
+            ClientSide.out.println("addelectiontime;" + data);
+
+            String response = ClientSide.in.readLine();
+            JOptionPane.showMessageDialog(this, "Server: " + response);
+
+        } catch (DateTimeParseException dtpe) {
+            JOptionPane.showMessageDialog(this, "Invalid date or time format.\nUse: YYYY-MM-DD and HH:mm (24-hour)");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Communication error: " + ex.getMessage());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Unexpected error: " + e.getMessage());
         }
-
-        if (!startTime.isBefore(endTime)) {
-            JOptionPane.showMessageDialog(this, "Start time must be before end time.");
-            return;
-        }
-
-        if (electionDate.equals(today) && startTime.isBefore(now)) {
-            JOptionPane.showMessageDialog(this, "Start time must be in the future.");
-            return;
-        }
-
-        // 🔌 Make sure connection is active
-        if (!ClientSide.isConnected()) {
-            ClientSide.connectToServer();
-        }
-
-        // Build and send the command
-        String data = String.join(",", dateStr, startStr, endStr);
-        ClientSide.out.println("addelectiontime;" + data);
-
-        String response = ClientSide.in.readLine();
-        JOptionPane.showMessageDialog(this, "Server: " + response);
-
-    } catch (DateTimeParseException dtpe) {
-        JOptionPane.showMessageDialog(this, "Invalid date or time format.\nUse: YYYY-MM-DD and HH:mm (24-hour)");
-    } catch (IOException ex) {
-        JOptionPane.showMessageDialog(this, "Communication error: " + ex.getMessage());
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Unexpected error: " + e.getMessage());
     }
-}
 
     private void addParty() {
-    String partyId = partyIdField.getText().trim();
-    String partyName = partyNameField.getText().trim();
-    String partySymbol = partySymbolField.getText().trim();
+        String partyId = partyIdField.getText().trim();
+        String partyName = partyNameField.getText().trim();
+        String partySymbol = partySymbolField.getText().trim();
 
-    if (!validatePartyInput(partyId, partyName, partySymbol)) {
-        return;
-    }
-
-    try {
-        if (!ClientSide.isConnected()) {
-            ClientSide.connectToServer();
-        }
-
-        String data = String.join(",", partyId, partyName, partySymbol);
-        ClientSide.out.println("addparty;" + data);  // Command: addparty
-        String response = ClientSide.in.readLine();
-      
-        JOptionPane.showMessageDialog(this, "Server: " + response);
-
-        if (response != null && response.toLowerCase().contains("success")) {
-            clearPartyFields();
-             loadPartiesIntoCandidateTable(); 
-             
-        }
-
-    }
-    catch (IOException ex) {
-        JOptionPane.showMessageDialog(this, "Communication error: " + ex.getMessage());
-    }
-}
-    private void updateParty() {
-    String partyId = partyIdField.getText().trim();
-    String partyName = partyNameField.getText().trim();
-    String partySymbol = partySymbolField.getText().trim();
-
-    if (!validatePartyInput(partyId, partyName, partySymbol)) {
-        return;
-    }
-
-    try {
-        if (!ClientSide.isConnected()) {
-            ClientSide.connectToServer();
-        }
-
-        String data = String.join(",", partyId, partyName, partySymbol);
-        ClientSide.out.println("updateparty;" + data);  // Command: updateparty
-        String response = ClientSide.in.readLine();
-        JOptionPane.showMessageDialog(this, "Server: " + response);
-
-        if (response != null && response.toLowerCase().contains("success")) {
-            clearPartyFields();
-             loadPartiesIntoCandidateTable(); 
-            // Optional, only if you want to clear the form after update
-        }
-
-    } catch (IOException ex) {
-        JOptionPane.showMessageDialog(this, "Communication error: " + ex.getMessage());
-    }
-}
-private void deleteParty() {
-    String partyId = partyIdField.getText().trim();
-
-    if (partyId.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Party ID is required.", "Validation Error", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-
-    try {
-        int id = Integer.parseInt(partyId);
-        if (id <= 0) {
-            JOptionPane.showMessageDialog(this, "Party ID must be a positive integer.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+        if (!validatePartyInput(partyId, partyName, partySymbol)) {
             return;
         }
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Party ID must be a valid integer.", "Validation Error", JOptionPane.WARNING_MESSAGE);
-        return;
+
+        try {
+            if (!ClientSide.isConnected()) {
+                ClientSide.connectToServer();
+            }
+
+            String data = String.join(",", partyId, partyName, partySymbol);
+            ClientSide.out.println("addparty;" + data);  // Command: addparty
+            String response = ClientSide.in.readLine();
+
+            JOptionPane.showMessageDialog(this, "Server: " + response);
+
+            if (response != null && response.toLowerCase().contains("success")) {
+                clearPartyFields();
+                loadPartiesIntoCandidateTable();
+
+            }
+
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Communication error: " + ex.getMessage());
+        }
     }
 
-    int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this party?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
-    if (confirm != JOptionPane.YES_OPTION) {
-        return;
-    }
+    private void updateParty() {
+        String partyId = partyIdField.getText().trim();
+        String partyName = partyNameField.getText().trim();
+        String partySymbol = partySymbolField.getText().trim();
 
-    try {
-        if (!ClientSide.isConnected()) {
-            ClientSide.connectToServer();
+        if (!validatePartyInput(partyId, partyName, partySymbol)) {
+            return;
         }
 
-        ClientSide.out.println("deleteparty;" + partyId);  // Command format
-        String response = ClientSide.in.readLine();
-        JOptionPane.showMessageDialog(this, "Server: " + response);
+        try {
+            if (!ClientSide.isConnected()) {
+                ClientSide.connectToServer();
+            }
 
-        if (response != null && response.toLowerCase().contains("success")) {
-            clearPartyFields();
-             loadPartiesIntoCandidateTable(); 
-             
+            String data = String.join(",", partyId, partyName, partySymbol);
+            ClientSide.out.println("updateparty;" + data);  // Command: updateparty
+            String response = ClientSide.in.readLine();
+            JOptionPane.showMessageDialog(this, "Server: " + response);
+
+            if (response != null && response.toLowerCase().contains("success")) {
+                clearPartyFields();
+                loadPartiesIntoCandidateTable();
+                // Optional, only if you want to clear the form after update
+            }
+
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Communication error: " + ex.getMessage());
+        }
+    }
+
+    private void deleteParty() {
+        String partyId = partyIdField.getText().trim();
+
+        if (partyId.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Party ID is required.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+            return;
         }
 
-    } catch (IOException ex) {
-        JOptionPane.showMessageDialog(this, "Communication error: " + ex.getMessage());
-    }
-}
-
-private boolean validatePartyInput(String partyId, String partyName, String partySymbol) {
-    List<String> errors = new ArrayList<>();
-
-    if (partyId.isEmpty()) errors.add("Party ID is required.");
-    if (partyName.isEmpty()) errors.add("Party Name is required.");
-    if (partySymbol.isEmpty()) errors.add("Party Symbol is required.");
-
-    try {
-        int id = Integer.parseInt(partyId);
-        if (id <= 0) {
-            errors.add("Party ID must be a positive number.");
+        try {
+            int id = Integer.parseInt(partyId);
+            if (id <= 0) {
+                JOptionPane.showMessageDialog(this, "Party ID must be a positive integer.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Party ID must be a valid integer.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+            return;
         }
-    } catch (NumberFormatException e) {
-        errors.add("Party ID must be a valid integer.");
+
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this party?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        try {
+            if (!ClientSide.isConnected()) {
+                ClientSide.connectToServer();
+            }
+
+            ClientSide.out.println("deleteparty;" + partyId);  // Command format
+            String response = ClientSide.in.readLine();
+            JOptionPane.showMessageDialog(this, "Server: " + response);
+
+            if (response != null && response.toLowerCase().contains("success")) {
+                clearPartyFields();
+                loadPartiesIntoCandidateTable();
+
+            }
+
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Communication error: " + ex.getMessage());
+        }
     }
 
-    if (!errors.isEmpty()) {
-        JOptionPane.showMessageDialog(this, String.join("\n", errors), "Validation Error", JOptionPane.WARNING_MESSAGE);
-        return false;
+    private boolean validatePartyInput(String partyId, String partyName, String partySymbol) {
+        List<String> errors = new ArrayList<>();
+
+        if (partyId.isEmpty()) {
+            errors.add("Party ID is required.");
+        }
+        if (partyName.isEmpty()) {
+            errors.add("Party Name is required.");
+        }
+        if (partySymbol.isEmpty()) {
+            errors.add("Party Symbol is required.");
+        }
+
+        try {
+            int id = Integer.parseInt(partyId);
+            if (id <= 0) {
+                errors.add("Party ID must be a positive number.");
+            }
+        } catch (NumberFormatException e) {
+            errors.add("Party ID must be a valid integer.");
+        }
+
+        if (!errors.isEmpty()) {
+            JOptionPane.showMessageDialog(this, String.join("\n", errors), "Validation Error", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        return true;
     }
 
-    return true;
-}
-private void clearPartyFields() {
-    partyIdField.setText("");
-    partyNameField.setText("");
-    partySymbolField.setText("");
-}
-public static void main(String args[]) {
+    private void clearPartyFields() {
+        partyIdField.setText("");
+        partyNameField.setText("");
+        partySymbolField.setText("");
+    }
+
+    public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -1832,499 +1880,547 @@ public static void main(String args[]) {
             }
         });
     }
-private void addCandidate() {
-    String cnic = candidateCnic.getText().trim();
-    String name = candidateName.getText().trim();
 
-    int selectedRow = candidateParty.getSelectedRow();
-    if (selectedRow == -1) {
-        JOptionPane.showMessageDialog(this, "Please select a party from the table.");
-        return;
-    }
-    String partyId = (String) candidateParty.getValueAt(selectedRow, 0);
+    private void addCandidate() {
+        String cnic = candidateCnic.getText().trim();
+        String name = candidateName.getText().trim();
 
-    String selectedConstituency = (String) candidateConstituency.getSelectedItem();
-    String constituencyId = selectedConstituency != null ? selectedConstituency.split("\\.")[0].trim() : "";
+        int selectedRow = candidateParty.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a party from the table.");
+            return;
+        }
+        String partyId = (String) candidateParty.getValueAt(selectedRow, 0);
 
-    if (!validateCandidateInput(cnic, name, partyId, constituencyId)) {
-        return;
-    }
+        String selectedConstituency = (String) candidateConstituency.getSelectedItem();
+        String constituencyId = selectedConstituency != null ? selectedConstituency.split("\\.")[0].trim() : "";
 
-    String data = String.join(",", cnic, name, partyId, constituencyId);
-    String response = ClientSide.sendRequest("addcandidate;" + data);
-
-    if (response != null && response.toLowerCase().contains("success")) {
-        JOptionPane.showMessageDialog(this, "Server: " + response);
-        clearCandidateFields();
-        
-        
-      
-    } else if (response != null) {
-        JOptionPane.showMessageDialog(this, "Server: " + response);
-    }
-}
-
-private void updateCandidate() {
-    String cnic = candidateCnic.getText().trim();
-    String name = candidateName.getText().trim();
-
-    int selectedRow = candidateParty.getSelectedRow();
-    if (selectedRow == -1) {
-        JOptionPane.showMessageDialog(this, "Please select a party from the table.");
-        return;
-    }
-    String partyId = (String) candidateParty.getValueAt(selectedRow, 0);
-
-    String selectedConstituency = (String) candidateConstituency.getSelectedItem();
-    String constituencyId = selectedConstituency != null ? selectedConstituency.split("\\.")[0].trim() : "";
-
-    if (!validateCandidateInput(cnic, name, partyId, constituencyId)) {
-        return;
-    }
-
-    String data = String.join(",", cnic, name, partyId, constituencyId);
-    String response = ClientSide.sendRequest("updatecandidate;" + data);
-
-    if (response != null && response.toLowerCase().contains("success")) {
-        JOptionPane.showMessageDialog(this, "Server: " + response);
-        clearCandidateFields();
-    } else if (response != null) {
-        JOptionPane.showMessageDialog(this, "Server: " + response);
-    }
-}
-
-private void deleteCandidate() {
-    String cnic = candidateCnic.getText().trim();
-
-    if (cnic.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "CNIC is required for deletion.");
-        return;
-    }
-
-    int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this candidate?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
-    if (confirm != JOptionPane.YES_OPTION) {
-        return;
-    }
-
-    String response = ClientSide.sendRequest("deletecandidate;" + cnic);
-
-    if (response != null && response.toLowerCase().contains("success")) {
-        JOptionPane.showMessageDialog(this, "Server: " + response);
-        clearCandidateFields();
-    } else if (response != null) {
-        JOptionPane.showMessageDialog(this, "Server: " + response);
-    }
-}
-
-
-private boolean validateCandidateInput(String cnic, String name, String partyId, String constituencyId) {
-    List<String> errors = new ArrayList<>();
-
-    if (cnic.isEmpty()) errors.add("CNIC is required.");
-    if (name.isEmpty()) errors.add("Name is required.");
-    if (partyId == null || partyId.isEmpty()) errors.add("Party selection is required.");
-    if (constituencyId == null || constituencyId.isEmpty()) errors.add("Constituency selection is required.");
-
-    if (!errors.isEmpty()) {
-        JOptionPane.showMessageDialog(this, String.join("\n", errors), "Validation Error", JOptionPane.WARNING_MESSAGE);
-        return false;
-    }
-
-    return true;
-}
-private void clearCandidateFields() {
-    candidateCnic.setText("");
-    candidateName.setText("");
-     candidateParty.getSelectionModel().clearSelection();
-
-    candidateConstituency.setSelectedIndex(-1);
-}
-private void loadPartiesIntoCandidateTable() {
-    partyTableModel.setRowCount(0); // Clear existing rows
-
-    try {
-        // Force fresh connection for each request (recommended for single-request-per-connection servers)
-        ClientSide.connectToServer();
-
-        ClientSide.out.println("getallparties");
-
-        String line;
-        while ((line = ClientSide.in.readLine()) != null) {
-            if (line.trim().isEmpty()) break; // End of data
-
-            String[] parts = line.split(",");
-            if (parts.length == 3) {
-                Object[] row = {parts[0].trim(), parts[1].trim(), parts[2].trim()};
-                partyTableModel.addRow(row);
-            }
+        if (!validateCandidateInput(cnic, name, partyId, constituencyId)) {
+            return;
         }
 
-        // Optional: Close socket after read if you want to enforce reconnects elsewhere too
-        ClientSide.socket.close(); // Safe cleanup if you want short-lived connections
+        String data = String.join(",", cnic, name, partyId, constituencyId);
+        String response = ClientSide.sendRequest("addcandidate;" + data);
 
-    } catch (IOException e) {
-        JOptionPane.showMessageDialog(this, "Error loading parties: " + e.getMessage());
-    }
-}
-
-private void updateVoter() {
-    String cnic = cnicField.getText().trim();
-    String name = nameField.getText().trim();
-    String age = ageField.getText().trim();
-    String gender = genderField.getText().trim();
-    String address = addressField.getText().trim();
-    String city = cityField.getText().trim();
-    String selectedItem = (String) constituencyField.getSelectedItem();
-    String constituencyId = selectedItem.split("\\.")[0].trim();
-
-    if (!validateInput(cnic, name, age, gender, address, city, constituencyId)) {
-        return;
-    }
-
-    try {
-        if (!ClientSide.isConnected()) {
-            ClientSide.connectToServer();
-        }
-
-        String data = String.join(",", cnic, name, age, gender, address, city, constituencyId);
-        ClientSide.out.println("update;" + data);
-        String response = ClientSide.in.readLine();
-        JOptionPane.showMessageDialog(this, "Server: " + response);
         if (response != null && response.toLowerCase().contains("success")) {
-            clearFields();
-            loadVoterTableData();
-        }
-    } catch (IOException ex) {
-        JOptionPane.showMessageDialog(this, "Communication error: " + ex.getMessage());
-    }
-}
-private void deleteVoter() {
-    String cnic = cnicField.getText().trim();
+            JOptionPane.showMessageDialog(this, "Server: " + response);
+            clearCandidateFields();
 
-    if (cnic.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "CNIC is required to delete a voter.", "Validation Error", JOptionPane.WARNING_MESSAGE);
-        return;
+        } else if (response != null) {
+            JOptionPane.showMessageDialog(this, "Server: " + response);
+        }
     }
 
-    try {
-        if (!ClientSide.isConnected()) {
-            ClientSide.connectToServer();
+    private void updateCandidate() {
+        String cnic = candidateCnic.getText().trim();
+        String name = candidateName.getText().trim();
+
+        int selectedRow = candidateParty.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a party from the table.");
+            return;
+        }
+        String partyId = (String) candidateParty.getValueAt(selectedRow, 0);
+
+        String selectedConstituency = (String) candidateConstituency.getSelectedItem();
+        String constituencyId = selectedConstituency != null ? selectedConstituency.split("\\.")[0].trim() : "";
+
+        if (!validateCandidateInput(cnic, name, partyId, constituencyId)) {
+            return;
         }
 
-        ClientSide.out.println("delete;" + cnic);
-        String response = ClientSide.in.readLine();
-        JOptionPane.showMessageDialog(this, "Server: " + response);
+        String data = String.join(",", cnic, name, partyId, constituencyId);
+        String response = ClientSide.sendRequest("updatecandidate;" + data);
+
         if (response != null && response.toLowerCase().contains("success")) {
-            clearFields();
-          loadVoterTableData();
+            JOptionPane.showMessageDialog(this, "Server: " + response);
+            clearCandidateFields();
+        } else if (response != null) {
+            JOptionPane.showMessageDialog(this, "Server: " + response);
         }
-    } catch (IOException ex) {
-        JOptionPane.showMessageDialog(this, "Communication error: " + ex.getMessage());
-    }
-}
-private boolean validateInput(String cnic, String name, String age, String gender, String address, String city, String constituencyId) {
-    List<String> errors = new ArrayList<>();
-    if (cnic.isEmpty()) errors.add("CNIC is required");
-    if (name.isEmpty()) errors.add("Name is required");
-    if (age.isEmpty()) errors.add("Age is required");
-    if (gender.isEmpty()) errors.add("Gender is required");
-    if (address.isEmpty()) errors.add("Address is required");
-    if (city.isEmpty()) errors.add("City is required");
-    if (constituencyId == null || constituencyId.isEmpty()) errors.add("Constituency selection is required");
-
-    if (!errors.isEmpty()) {
-        JOptionPane.showMessageDialog(this, String.join("\n", errors), "Validation Error", JOptionPane.WARNING_MESSAGE);
-        return false;
     }
 
-    try {
-        int ageVal = Integer.parseInt(age);
-        if (ageVal <= 0) {
-            JOptionPane.showMessageDialog(this, "Age must be a positive integer.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+    private void deleteCandidate() {
+        String cnic = candidateCnic.getText().trim();
+
+        if (cnic.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "CNIC is required for deletion.");
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this candidate?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        String response = ClientSide.sendRequest("deletecandidate;" + cnic);
+
+        if (response != null && response.toLowerCase().contains("success")) {
+            JOptionPane.showMessageDialog(this, "Server: " + response);
+            clearCandidateFields();
+        } else if (response != null) {
+            JOptionPane.showMessageDialog(this, "Server: " + response);
+        }
+    }
+
+    private boolean validateCandidateInput(String cnic, String name, String partyId, String constituencyId) {
+        List<String> errors = new ArrayList<>();
+
+        if (cnic.isEmpty()) {
+            errors.add("CNIC is required.");
+        }
+        if (name.isEmpty()) {
+            errors.add("Name is required.");
+        }
+        if (partyId == null || partyId.isEmpty()) {
+            errors.add("Party selection is required.");
+        }
+        if (constituencyId == null || constituencyId.isEmpty()) {
+            errors.add("Constituency selection is required.");
+        }
+
+        if (!errors.isEmpty()) {
+            JOptionPane.showMessageDialog(this, String.join("\n", errors), "Validation Error", JOptionPane.WARNING_MESSAGE);
             return false;
         }
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Age must be a valid integer.", "Validation Error", JOptionPane.WARNING_MESSAGE);
-        return false;
+
+        return true;
     }
 
-    return true;
-}
-private void clearFields() {
-    cnicField.setText("");
-    nameField.setText("");
-    ageField.setText("");
-    addressField.setText("");
-    cityField.setText("");
-    genderField.setText("");
-    constituencyField.setSelectedIndex(-1); // clear combo box selection
-}
-private void loadVoterTableData() {
-    voterTableModel.setRowCount(0); // Clear existing rows
+    private void clearCandidateFields() {
+        candidateCnic.setText("");
+        candidateName.setText("");
+        candidateParty.getSelectionModel().clearSelection();
 
-    try {
-        ClientSide.connectToServer();
-        if (!ClientSide.isConnected()) {
-            JOptionPane.showMessageDialog(this, "Unable to connect to server.");
-            return;
-        }
-
-        ClientSide.out.println("getallvoters");
-
-        String line;
-        while ((line = ClientSide.in.readLine()) != null) {
-            if (line.trim().isEmpty()) break; // Server signals end
-
-            String[] parts = line.split(",");
-            if (parts.length == 7) {
-                Object[] row = new Object[7];
-                for (int i = 0; i < 7; i++) {
-                    row[i] = parts[i].trim();
-                }
-                voterTableModel.addRow(row);
-            }
-        }
-    } catch (IOException e) {
-        JOptionPane.showMessageDialog(this, "❌ Error loading voters: " + e.getMessage(),
-            "Connection Error", JOptionPane.ERROR_MESSAGE);
-    } finally {
-        ClientSide.closeConnection(); // Always close socket and streams
-    }
-}
-private void loadResultTableData() {
-    resultTableModel.setRowCount(0);  // Clear previous results
-
-    try {
-        ClientSide.connectToServer();
-        ClientSide.out.println("getresults");
-
-        String line;
-        while ((line = ClientSide.in.readLine()) != null) {
-            if (line.trim().isEmpty()) break;
-
-            String[] parts = line.split(";");
-            if (parts.length == 6) {
-                String partyName = parts[0].trim();
-                String partySymbol = parts[1].trim();
-                String numCandidates = parts[2].trim();
-                String totalVotes = parts[3].trim();
-                String votesBehind = parts[4].trim();
-                String status = parts[5].trim();
-
-                Object[] row = {partyName, partySymbol, numCandidates, totalVotes, votesBehind, status};
-                resultTableModel.addRow(row);
-            }
-        }
-
-        ClientSide.socket.close();  // Optional
-    } catch (IOException e) {
-        JOptionPane.showMessageDialog(this, "Error loading election results: " + e.getMessage());
-    }
-}
-private void loadCandidateTableData() {
-    candidateTableModel.setRowCount(0);   // Clear first table
-    // Clear second table
-
-    try {
-        ClientSide.connectToServer();
-        ClientSide.out.println("getallcandidates");
-
-        String line;
-        while ((line = ClientSide.in.readLine()) != null) {
-            if (line.trim().isEmpty()) break;
-
-            String[] parts = line.split(",");
-            if (parts.length == 5) {
-                String cnic = parts[0].trim();
-                String name = parts[1].trim();
-                String partyName = parts[2].trim();
-                String symbol = parts[3].trim();
-                String constituencyName = parts[4].trim();
-
-                Object[] row = {cnic, name, partyName, symbol, constituencyName};
-                candidateTableModel.addRow(row);    // Add to first table
-                  // Add to second table
-            }
-        }
-
-        ClientSide.socket.close(); // Optional
-    } catch (IOException e) {
-        JOptionPane.showMessageDialog(this, "Error loading candidate data: " + e.getMessage());
-    }
-}
-private void loadCandidateResultTableData() {
-    candidateResultTableModel.setRowCount(0);  // Clear old data
-
-    try {
-        ClientSide.connectToServer();
-        ClientSide.out.println("getcandidateresults");
-
-        String line;
-        while ((line = ClientSide.in.readLine()) != null) {
-            if (line.trim().isEmpty()) break;
-
-            String[] parts = line.split(";");
-            if (parts.length == 6) {
-                String candidateName = parts[0].trim();
-                String constituencyName = parts[1].trim();
-                String partyName = parts[2].trim();
-                String partySymbol = parts[3].trim();
-                String votes = parts[4].trim();
-                String status = parts[5].trim();
-
-                Object[] row = {candidateName, constituencyName, partyName, partySymbol, votes, status};
-                candidateResultTableModel.addRow(row);
-            }
-        }
-
-        ClientSide.socket.close();
-    } catch (IOException e) {
-        JOptionPane.showMessageDialog(this, "Error loading candidate results: " + e.getMessage());
-    }
-}
-private void loadPartyResultTableData() {
-    resultPartyTableModel.setRowCount(0);  // Clear existing rows
-
-    try {
-        ClientSide.connectToServer();
-        ClientSide.out.println("getpartyresults");
-
-        String line;
-        while ((line = ClientSide.in.readLine()) != null) {
-            if (line.trim().isEmpty()) break;
-
-            String[] parts = line.split(";");
-            if (parts.length == 3) {
-                String partyName = parts[0].trim();
-                String symbol = parts[1].trim();
-                String seatsWon = parts[2].trim();
-
-                resultPartyTableModel.addRow(new Object[]{partyName, symbol, seatsWon});
-            }
-        }
-
-        ClientSide.socket.close(); // Optional
-    } catch (IOException e) {
-        JOptionPane.showMessageDialog(this, "Error loading party results: " + e.getMessage());
-    }
-}
-private void loadVoteHistoryTableData() {
-    voteHistoryTableModel.setRowCount(0);  // Clear existing rows
-
-    try {
-        ClientSide.connectToServer();
-        ClientSide.out.println("getvotehistory");
-
-        String line;
-        while ((line = ClientSide.in.readLine()) != null) {
-            if (line.trim().isEmpty()) break;
-
-            String[] parts = line.split(";");
-            if (parts.length == 4) {
-                String voterName = parts[0].trim();
-                String candidateName = parts[1].trim();
-                String partyName = parts[2].trim();
-                String voteTime = parts[3].trim();
-
-                voteHistoryTableModel.addRow(new Object[]{voterName, candidateName, partyName, voteTime});
-            }
-        }
-
-        ClientSide.socket.close(); // Optional
-    } catch (IOException e) {
-        JOptionPane.showMessageDialog(this, "Error loading vote history: " + e.getMessage());
-    }
-}
-private void loadPartyTable() {
-    DefaultTableModel partyTableModel1 = (DefaultTableModel) partyTable.getModel();
-    partyTableModel1.setRowCount(0);  // Clear existing rows
-
-    try {
-        ClientSide.connectToServer();
-        ClientSide.out.println("getallparties1");
-
-        String line;
-        while ((line = ClientSide.in.readLine()) != null) {
-            if (line.trim().isEmpty()) break;
-
-            String[] parts = line.split(";");
-            if (parts.length == 3) {
-                String partyId = parts[0].trim();     // ID first
-                String partyName = parts[1].trim();   // Name
-                String partySymbol = parts[2].trim(); // Symbol
-
-                partyTableModel1.addRow(new Object[]{partyId, partyName, partySymbol});
-            }
-        }
-
-        ClientSide.socket.close();
-    } catch (IOException e) {
-        JOptionPane.showMessageDialog(this, "Error loading parties: " + e.getMessage());
-    }
-}
-        // TODO add your handling code here:
-private void forceWinSelectedParty() {
-    int selectedRow = partyTable.getSelectedRow();
-
-    if (selectedRow == -1) {
-        JOptionPane.showMessageDialog(this, "Please select a party from the table.");
-        return;
+        candidateConstituency.setSelectedIndex(-1);
     }
 
-    String partyId = partyTableModel1.getValueAt(selectedRow, 0).toString(); // assuming ID is in column 0
+    private void loadPartiesIntoCandidateTable() {
+        partyTableModel.setRowCount(0); // Clear existing rows
 
-    try {
-        ClientSide.connectToServer();
-        ClientSide.out.println("forcewin;" + partyId);
-
-        String line;
-        StringBuilder response = new StringBuilder();
-
-        while ((line = ClientSide.in.readLine()) != null) {
-            if (line.trim().isEmpty()) break;
-            response.append(line).append("\n");
-        }
-
-        JOptionPane.showMessageDialog(this, response.toString().trim());
-
-        ClientSide.socket.close();  // Optional, good practice
-    } catch (IOException e) {
-        JOptionPane.showMessageDialog(this, "Error during force win: " + e.getMessage());
-    }
-}
-public void loadElectionScheduleToLabels() {
-    try {
-        if (!ClientSide.isConnected()) {
+        try {
+            // Force fresh connection for each request (recommended for single-request-per-connection servers)
             ClientSide.connectToServer();
+
+            ClientSide.out.println("getallparties");
+
+            String line;
+            while ((line = ClientSide.in.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    break; // End of data
+                }
+                String[] parts = line.split(",");
+                if (parts.length == 3) {
+                    Object[] row = {parts[0].trim(), parts[1].trim(), parts[2].trim()};
+                    partyTableModel.addRow(row);
+                }
+            }
+
+            // Optional: Close socket after read if you want to enforce reconnects elsewhere too
+            ClientSide.socket.close(); // Safe cleanup if you want short-lived connections
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error loading parties: " + e.getMessage());
         }
-
-        ClientSide.out.println("getelectiontime");
-        String response = ClientSide.in.readLine();
-        System.out.println("📥 Server response: " + response);  // Debug log
-
-        if (response == null || response.startsWith("ERROR")) {
-            lblElectionDate.setText("N/A");
-            lblStartTime.setText("N/A");
-            lblEndTime.setText("N/A");
-            return;
-        }
-
-        String[] parts = response.split(",");
-        if (parts.length < 3) {
-            JOptionPane.showMessageDialog(this, "⚠️ Server sent incomplete data: " + response);
-            return;
-        }
-
-        lblElectionDate.setText(parts[0]);
-        lblStartTime.setText(parts[1]);
-        lblEndTime.setText(parts[2]);
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "❌ Error loading election timing: " + e.getMessage());
     }
-}
 
+    private void updateVoter() {
+        String cnic = cnicField.getText().trim();
+        String name = nameField.getText().trim();
+        String age = ageField.getText().trim();
+        String gender = genderField.getText().trim();
+        String address = addressField.getText().trim();
+        String city = cityField.getText().trim();
+        String selectedItem = (String) constituencyField.getSelectedItem();
+        String constituencyId = selectedItem.split("\\.")[0].trim();
 
+        if (!validateInput(cnic, name, age, gender, address, city, constituencyId)) {
+            return;
+        }
+
+        try {
+            if (!ClientSide.isConnected()) {
+                ClientSide.connectToServer();
+            }
+
+            String data = String.join(",", cnic, name, age, gender, address, city, constituencyId);
+            ClientSide.out.println("update;" + data);
+            String response = ClientSide.in.readLine();
+            JOptionPane.showMessageDialog(this, "Server: " + response);
+            if (response != null && response.toLowerCase().contains("success")) {
+                clearFields();
+                loadVoterTableData();
+            }
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Communication error: " + ex.getMessage());
+        }
+    }
+
+    private void deleteVoter() {
+        String cnic = cnicField.getText().trim();
+
+        if (cnic.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "CNIC is required to delete a voter.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            if (!ClientSide.isConnected()) {
+                ClientSide.connectToServer();
+            }
+
+            ClientSide.out.println("delete;" + cnic);
+            String response = ClientSide.in.readLine();
+            JOptionPane.showMessageDialog(this, "Server: " + response);
+            if (response != null && response.toLowerCase().contains("success")) {
+                clearFields();
+                loadVoterTableData();
+            }
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Communication error: " + ex.getMessage());
+        }
+    }
+
+    private boolean validateInput(String cnic, String name, String age, String gender, String address, String city, String constituencyId) {
+        List<String> errors = new ArrayList<>();
+        if (cnic.isEmpty()) {
+            errors.add("CNIC is required");
+        }
+        if (name.isEmpty()) {
+            errors.add("Name is required");
+        }
+        if (age.isEmpty()) {
+            errors.add("Age is required");
+        }
+        if (gender.isEmpty()) {
+            errors.add("Gender is required");
+        }
+        if (address.isEmpty()) {
+            errors.add("Address is required");
+        }
+        if (city.isEmpty()) {
+            errors.add("City is required");
+        }
+        if (constituencyId == null || constituencyId.isEmpty()) {
+            errors.add("Constituency selection is required");
+        }
+
+        if (!errors.isEmpty()) {
+            JOptionPane.showMessageDialog(this, String.join("\n", errors), "Validation Error", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        try {
+            int ageVal = Integer.parseInt(age);
+            if (ageVal <= 0) {
+                JOptionPane.showMessageDialog(this, "Age must be a positive integer.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Age must be a valid integer.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+
+    private void clearFields() {
+        cnicField.setText("");
+        nameField.setText("");
+        ageField.setText("");
+        addressField.setText("");
+        cityField.setText("");
+        genderField.setText("");
+        constituencyField.setSelectedIndex(-1); // clear combo box selection
+    }
+
+    private void loadVoterTableData() {
+        voterTableModel.setRowCount(0); // Clear existing rows
+
+        try {
+            ClientSide.connectToServer();
+            if (!ClientSide.isConnected()) {
+                JOptionPane.showMessageDialog(this, "Unable to connect to server.");
+                return;
+            }
+
+            ClientSide.out.println("getallvoters");
+
+            String line;
+            while ((line = ClientSide.in.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    break; // Server signals end
+                }
+                String[] parts = line.split(",");
+                if (parts.length == 7) {
+                    Object[] row = new Object[7];
+                    for (int i = 0; i < 7; i++) {
+                        row[i] = parts[i].trim();
+                    }
+                    voterTableModel.addRow(row);
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "❌ Error loading voters: " + e.getMessage(),
+                    "Connection Error", JOptionPane.ERROR_MESSAGE);
+        } finally {
+            ClientSide.closeConnection(); // Always close socket and streams
+        }
+    }
+
+    private void loadResultTableData() {
+        resultTableModel.setRowCount(0);  // Clear previous results
+
+        try {
+            ClientSide.connectToServer();
+            ClientSide.out.println("getresults");
+
+            String line;
+            while ((line = ClientSide.in.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    break;
+                }
+
+                String[] parts = line.split(";");
+                if (parts.length == 6) {
+                    String partyName = parts[0].trim();
+                    String partySymbol = parts[1].trim();
+                    String numCandidates = parts[2].trim();
+                    String totalVotes = parts[3].trim();
+                    String votesBehind = parts[4].trim();
+                    String status = parts[5].trim();
+
+                    Object[] row = {partyName, partySymbol, numCandidates, totalVotes, votesBehind, status};
+                    resultTableModel.addRow(row);
+                }
+            }
+
+            ClientSide.socket.close();  // Optional
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error loading election results: " + e.getMessage());
+        }
+    }
+
+    private void loadCandidateTableData() {
+        candidateTableModel.setRowCount(0);   // Clear first table
+        // Clear second table
+
+        try {
+            ClientSide.connectToServer();
+            ClientSide.out.println("getallcandidates");
+
+            String line;
+            while ((line = ClientSide.in.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    break;
+                }
+
+                String[] parts = line.split(",");
+                if (parts.length == 5) {
+                    String cnic = parts[0].trim();
+                    String name = parts[1].trim();
+                    String partyName = parts[2].trim();
+                    String symbol = parts[3].trim();
+                    String constituencyName = parts[4].trim();
+
+                    Object[] row = {cnic, name, partyName, symbol, constituencyName};
+                    candidateTableModel.addRow(row);    // Add to first table
+                    // Add to second table
+                }
+            }
+
+            ClientSide.socket.close(); // Optional
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error loading candidate data: " + e.getMessage());
+        }
+    }
+
+    private void loadCandidateResultTableData() {
+        candidateResultTableModel.setRowCount(0);  // Clear old data
+
+        try {
+            ClientSide.connectToServer();
+            ClientSide.out.println("getcandidateresults");
+
+            String line;
+            while ((line = ClientSide.in.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    break;
+                }
+
+                String[] parts = line.split(";");
+                if (parts.length == 6) {
+                    String candidateName = parts[0].trim();
+                    String constituencyName = parts[1].trim();
+                    String partyName = parts[2].trim();
+                    String partySymbol = parts[3].trim();
+                    String votes = parts[4].trim();
+                    String status = parts[5].trim();
+
+                    Object[] row = {candidateName, constituencyName, partyName, partySymbol, votes, status};
+                    candidateResultTableModel.addRow(row);
+                }
+            }
+
+            ClientSide.socket.close();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error loading candidate results: " + e.getMessage());
+        }
+    }
+
+    private void loadPartyResultTableData() {
+        resultPartyTableModel.setRowCount(0);  // Clear existing rows
+
+        try {
+            ClientSide.connectToServer();
+            ClientSide.out.println("getpartyresults");
+
+            String line;
+            while ((line = ClientSide.in.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    break;
+                }
+
+                String[] parts = line.split(";");
+                if (parts.length == 3) {
+                    String partyName = parts[0].trim();
+                    String symbol = parts[1].trim();
+                    String seatsWon = parts[2].trim();
+
+                    resultPartyTableModel.addRow(new Object[]{partyName, symbol, seatsWon});
+                }
+            }
+
+            ClientSide.socket.close(); // Optional
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error loading party results: " + e.getMessage());
+        }
+    }
+
+    private void loadVoteHistoryTableData() {
+        voteHistoryTableModel.setRowCount(0);  // Clear existing rows
+
+        try {
+            ClientSide.connectToServer();
+            ClientSide.out.println("getvotehistory");
+
+            String line;
+            while ((line = ClientSide.in.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    break;
+                }
+
+                String[] parts = line.split(";");
+                if (parts.length == 4) {
+                    String voterName = parts[0].trim();
+                    String candidateName = parts[1].trim();
+                    String partyName = parts[2].trim();
+                    String voteTime = parts[3].trim();
+
+                    voteHistoryTableModel.addRow(new Object[]{voterName, candidateName, partyName, voteTime});
+                }
+            }
+
+            ClientSide.socket.close(); // Optional
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error loading vote history: " + e.getMessage());
+        }
+    }
+
+    private void loadPartyTable() {
+        DefaultTableModel partyTableModel1 = (DefaultTableModel) partyTable.getModel();
+        partyTableModel1.setRowCount(0);  // Clear existing rows
+
+        try {
+            ClientSide.connectToServer();
+            ClientSide.out.println("getallparties1");
+
+            String line;
+            while ((line = ClientSide.in.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    break;
+                }
+
+                String[] parts = line.split(";");
+                if (parts.length == 3) {
+                    String partyId = parts[0].trim();     // ID first
+                    String partyName = parts[1].trim();   // Name
+                    String partySymbol = parts[2].trim(); // Symbol
+
+                    partyTableModel1.addRow(new Object[]{partyId, partyName, partySymbol});
+                }
+            }
+
+            ClientSide.socket.close();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error loading parties: " + e.getMessage());
+        }
+    }
+    // TODO add your handling code here:
+
+    private void forceWinSelectedParty() {
+        int selectedRow = partyTable.getSelectedRow();
+
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a party from the table.");
+            return;
+        }
+
+        String partyId = partyTableModel1.getValueAt(selectedRow, 0).toString(); // assuming ID is in column 0
+
+        try {
+            ClientSide.connectToServer();
+            ClientSide.out.println("forcewin;" + partyId);
+
+            String line;
+            StringBuilder response = new StringBuilder();
+
+            while ((line = ClientSide.in.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    break;
+                }
+                response.append(line).append("\n");
+            }
+
+            JOptionPane.showMessageDialog(this, response.toString().trim());
+
+            ClientSide.socket.close();  // Optional, good practice
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error during force win: " + e.getMessage());
+        }
+    }
+
+    public void loadElectionScheduleToLabels() {
+        try {
+            if (!ClientSide.isConnected()) {
+                ClientSide.connectToServer();
+            }
+
+            ClientSide.out.println("getelectiontime");
+            String response = ClientSide.in.readLine();
+            System.out.println("📥 Server response: " + response);  // Debug log
+
+            if (response == null || response.startsWith("ERROR")) {
+                lblElectionDate.setText("N/A");
+                lblStartTime.setText("N/A");
+                lblEndTime.setText("N/A");
+                return;
+            }
+
+            String[] parts = response.split(",");
+            if (parts.length < 3) {
+                JOptionPane.showMessageDialog(this, "⚠️ Server sent incomplete data: " + response);
+                return;
+            }
+
+            lblElectionDate.setText(parts[0]);
+            lblStartTime.setText(parts[1]);
+            lblEndTime.setText(parts[2]);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "❌ Error loading election timing: " + e.getMessage());
+        }
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -2349,6 +2445,7 @@ public void loadElectionScheduleToLabels() {
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton13;
+    private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;

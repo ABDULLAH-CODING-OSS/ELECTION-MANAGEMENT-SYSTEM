@@ -2,6 +2,7 @@
 package design;
 
 import driver.ClientSide;
+import driver.SessionData;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -705,6 +706,9 @@ loadCandidateResultTableData();  // Load candidate-wise results
         jLabel25.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel25.setText("City");
 
+        genderField.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        genderField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
         addressField.setFont(new java.awt.Font("Segoe UI", 3, 14)); // NOI18N
         addressField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         addressField.setToolTipText("");
@@ -762,7 +766,7 @@ loadCandidateResultTableData();  // Load candidate-wise results
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap(66, Short.MAX_VALUE)
+                .addContainerGap(67, Short.MAX_VALUE)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -928,14 +932,15 @@ loadCandidateResultTableData();  // Load candidate-wise results
                 .addContainerGap()
                 .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
-                .addGroup(ResultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(lblElectionDate1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel12)
-                    .addComponent(lblStartTime1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(ResultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ResultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel19)
-                        .addComponent(lblEndTime1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(lblEndTime1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ResultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel7)
+                        .addComponent(lblElectionDate1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel12)
+                        .addComponent(lblStartTime1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
                 .addComponent(jLabel23)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1197,6 +1202,14 @@ private void loadCandidateTableData() {
 }
 private void updateVoter() {
     String cnic = cnicField.getText().trim();
+
+    // ✅ Step 1: Check if the logged-in voter is updating their own data
+    if (SessionData.voterCNIC == null || !SessionData.voterCNIC.equals(cnic)) {
+        JOptionPane.showMessageDialog(this, "You are only allowed to update your own data.");
+        return;
+    }
+
+    // ✅ Step 2: Continue as before without changing anything
     String name = nameField.getText().trim();
     String age = ageField.getText().trim();
     String gender = genderField.getText().trim();
@@ -1225,6 +1238,7 @@ private void updateVoter() {
         JOptionPane.showMessageDialog(this, "Communication error: " + ex.getMessage());
     }
 }
+
 private boolean validateInput(String cnic, String name, String age, String gender, String address, String city, String constituencyId) {
     List<String> errors = new ArrayList<>();
     if (cnic.isEmpty()) errors.add("CNIC is required");
